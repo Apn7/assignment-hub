@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--
+      Unit tests target Application/Domain with mocked interfaces.
+      Infrastructure and Api are referenced so that role-based access can be
+      proven end-to-end through WebApplicationFactory<Program> (a Student
+      receiving 403 on a Teacher route is a test, not a claim in the README).
+    -->
+    <ProjectReference Include="..\..\src\AssignmentHub.Domain\AssignmentHub.Domain.csproj" />
+    <ProjectReference Include="..\..\src\AssignmentHub.Application\AssignmentHub.Application.csproj" />
+    <ProjectReference Include="..\..\src\AssignmentHub.Infrastructure\AssignmentHub.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\AssignmentHub.Api\AssignmentHub.Api.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="xunit" Version="2.9.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Moq" Version="4.20.72" />
+    <!--
+      Pinned to 7.x on purpose: FluentAssertions 8.0.0 moved to the Xceed
+      commercial licence. 7.2.2 is the last Apache-2.0 release.
+    -->
+    <PackageReference Include="FluentAssertions" Version="7.2.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.29" />
+    <!-- In-memory provider for repository/workflow tests that should not need Postgres. -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.29" />
+    <PackageReference Include="coverlet.collector" Version="6.0.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>
