@@ -1,4 +1,7 @@
+using AssignmentHub.Domain.Entities;
 using AssignmentHub.Infrastructure.Persistence;
+using AssignmentHub.Infrastructure.Persistence.Seed;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,6 +32,12 @@ public static class DependencyInjection
         }
 
         services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
+
+        // Identity.Core's PBKDF2 hasher. Registered for the seeder now and reused
+        // by login/registration later, so there is only ever one hashing policy.
+        services.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
+
+        services.AddScoped<DataSeeder>();
 
         // Repositories and other Application-interface implementations are
         // registered here as they are introduced.
