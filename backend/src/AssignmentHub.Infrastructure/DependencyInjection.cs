@@ -49,6 +49,8 @@ public static class DependencyInjection
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
 
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IAssignmentRepository, AssignmentRepository>();
+        services.AddScoped<ITeacherAssignmentRepository, TeacherAssignmentRepository>();
 
         services.AddScoped<DataSeeder>();
 
