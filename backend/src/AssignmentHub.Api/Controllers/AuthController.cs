@@ -2,7 +2,6 @@ using AssignmentHub.Api.Contracts;
 using AssignmentHub.Application.Common;
 using AssignmentHub.Application.DTOs.Auth;
 using AssignmentHub.Application.Interfaces;
-using AssignmentHub.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -75,23 +74,5 @@ public sealed class AuthController : ControllerBase
             Email = User.FindFirst(AppClaimTypes.Email)?.Value ?? string.Empty,
             Role = User.FindFirst(AppClaimTypes.Role)?.Value ?? string.Empty
         });
-    }
-
-    /// <summary>
-    /// TEMPORARY probe used to verify that role-based authorization returns 403 for
-    /// non-admins. Delete this as soon as real admin endpoints exist — it carries no
-    /// product value.
-    /// </summary>
-    /// <response code="200">Caller holds the Admin role.</response>
-    /// <response code="401">Token missing or invalid.</response>
-    /// <response code="403">Authenticated, but not an Admin.</response>
-    [HttpGet("admin-check")]
-    [Authorize(Roles = nameof(UserRole.Admin))]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public IActionResult AdminCheck()
-    {
-        return Ok(new { message = "Admin role confirmed." });
     }
 }

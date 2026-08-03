@@ -12,7 +12,9 @@ JWT bearer tokens with role-based authorization. Users are created by the seeder
 | --- | --- | --- | --- |
 | `POST` | `/api/auth/login` | anonymous | Exchange email + password for a token |
 | `GET` | `/api/auth/me` | any authenticated user | Caller's identity, read from token claims |
-| `GET` | `/api/auth/admin-check` | `Admin` only | **Temporary.** Proves 403 works; delete when real admin endpoints land |
+
+Role gating on the feature endpoints is documented with those features — see
+[assignments.md](assignments.md#status-codes).
 
 ### Login
 
@@ -60,9 +62,11 @@ minutes) all come from the `Jwt` configuration section — nothing is hardcoded.
 claim-combination logic, a policy per role would be indirection without benefit.
 The attribute takes `nameof(UserRole.Admin)` rather than the string `"Admin"`, so
 renaming the enum member is a compile error instead of a silent authorization
-hole. Policies become worthwhile when resource-level rules arrive ("this teacher
-owns this assignment"), and those will live in Application services regardless —
-see below.
+hole. The resource-level rules that arrived with assignments ("this teacher owns
+this assignment", "this class is this student's") did not change that judgement:
+they live in Application services where they are unit-testable, so a policy would
+have added a layer without taking a decision — see
+[assignments.md](assignments.md#business-rules).
 
 **Inbound claim mapping is switched off.** By default the JWT handler rewrites
 `sub` into `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier`
@@ -110,8 +114,9 @@ degrading to tokens that cannot be securely verified. Note this also applies to
 | `/api/auth/me` with signature replaced | 401 |
 | Token with `role` edited `Student`→`Admin`, original signature | 401 |
 | Token with header downgraded to `alg: none` | 401 |
-| `admin-check` as Admin | 200 |
-| `admin-check` as Teacher or Student | 403 |
+| `/api/admin/assignments` as Admin | 200 |
+| `/api/admin/assignments` as Teacher or Student | 403 |
+| A teacher route as Student or Admin | 403 |
 | Unknown email vs wrong password | Identical 401 body (bar the per-request `traceId`) |
 | Malformed login body | 400 with field-level `errors` |
 
@@ -137,7 +142,10 @@ Deliberately out of scope for this project:
   would then be unreachable by login. The complete fix is a `citext` column or a
   unique index on `lower("Email")`; the interim measure is to normalise on write
   when admin user-creation is built.
-- **Resource-level authorization is not implemented yet.** Role checks answer "is
-  this a Teacher"; they cannot answer "is this teacher assigned to *this* class".
-  Those rules will live in Application services where they are unit-testable, and
-  are the substance of the next steps.
+- **Role checks are only the outer gate.** `[Authorize(Roles = ...)]` answers "is
+  this a Teacher"; it cannot answer "is this teacher assigned to *this* class" or
+  "is this assignment theirs". Those questions are answered per feature, in the
+  Application service that owns the rule — for assignments, in
+  [assignments.md](assignments.md#business-rules). A green role check is never
+  sufficient on its own, and the 403-versus-404 choice belongs to the rule rather
+  than to the middleware.
