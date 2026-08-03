@@ -6,6 +6,7 @@ using AssignmentHub.Api.Contracts;
 using AssignmentHub.Api.Middleware;
 using AssignmentHub.Application;
 using AssignmentHub.Infrastructure;
+using AssignmentHub.Infrastructure.Persistence.Seed;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
@@ -199,6 +200,15 @@ app.UseGlobalExceptionHandling();
 
 if (app.Environment.IsDevelopment())
 {
+    // Demo data for local development only. Idempotent: a restart against an
+    // already-seeded database is a no-op. Migrations are applied separately via
+    // `dotnet ef database update` (see docs/database.md), so the seeder skips and
+    // logs a warning if any are still pending.
+    using (var scope = app.Services.CreateScope())
+    {
+        await scope.ServiceProvider.GetRequiredService<DataSeeder>().SeedAsync();
+    }
+
     app.UseSwagger();
     app.UseSwaggerUI(options =>
     {
