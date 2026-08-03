@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AssignmentHub.Application\AssignmentHub.Application.csproj" />
+    <ProjectReference Include="..\AssignmentHub.Domain\AssignmentHub.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Npgsql brings Microsoft.EntityFrameworkCore(.Relational) in transitively. -->
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" />
+    <!-- Needed for IConfiguration / GetConnectionString in DependencyInjection.cs. -->
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <!--
+    The Domain layer is deliberately dependency-free: no NuGet packages and no
+    project references. Entities and enums here must stay persistence-agnostic
+    so that EF Core, ASP.NET Core and the test host can all depend on them
+    without the dependency ever pointing back the other way.
+  -->
+
+</Project>

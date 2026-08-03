@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AssignmentHub.Domain\AssignmentHub.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!--
+      Abstractions only. The Application layer declares the interfaces it needs
+      (repositories, clock, password hasher, token generator) and Infrastructure
+      supplies the implementations, so no EF Core or ASP.NET Core package is
+      allowed to appear here.
+    -->
+    <PackageReference Include="FluentValidation" Version="11.12.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.12.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
+  </ItemGroup>
+
+</Project>
