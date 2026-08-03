@@ -1,6 +1,6 @@
+using AssignmentHub.Application.Interfaces;
 using AssignmentHub.Domain.Entities;
 using AssignmentHub.Domain.Enums;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -14,7 +14,9 @@ namespace AssignmentHub.Infrastructure.Persistence.Seed;
 /// <remarks>
 /// Idempotent and Development-only. Invoked from <c>Program.cs</c>, not from
 /// <c>OnModelCreating</c>, because passwords have to be hashed at runtime and EF
-/// Core's <c>HasData</c> cannot express that.
+/// Core's <c>HasData</c> cannot express that. Hashing goes through the same
+/// <see cref="IPasswordHasher"/> the login path uses, so seeded credentials are
+/// guaranteed verifiable.
 /// </remarks>
 public sealed class DataSeeder
 {
@@ -46,12 +48,12 @@ public sealed class DataSeeder
     private static readonly Guid GradedSubmissionId = new("70000000-0000-0000-0000-000000000002");
 
     private readonly AppDbContext _context;
-    private readonly IPasswordHasher<User> _passwordHasher;
+    private readonly IPasswordHasher _passwordHasher;
     private readonly ILogger<DataSeeder> _logger;
 
     public DataSeeder(
         AppDbContext context,
-        IPasswordHasher<User> passwordHasher,
+        IPasswordHasher passwordHasher,
         ILogger<DataSeeder> logger)
     {
         _context = context;
@@ -92,7 +94,7 @@ public sealed class DataSeeder
                 CreatedAt = now
             };
 
-            user.PasswordHash = _passwordHasher.HashPassword(user, password);
+            user.PasswordHash = _passwordHasher.Hash(password);
             return user;
         }
 
