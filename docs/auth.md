@@ -14,7 +14,8 @@ JWT bearer tokens with role-based authorization. Users are created by the seeder
 | `GET` | `/api/auth/me` | any authenticated user | Caller's identity, read from token claims |
 
 Role gating on the feature endpoints is documented with those features — see
-[assignments.md](assignments.md#status-codes).
+[assignments.md](assignments.md#status-codes) and
+[submissions.md](submissions.md#status-codes).
 
 ### Login
 
@@ -114,9 +115,10 @@ degrading to tokens that cannot be securely verified. Note this also applies to
 | `/api/auth/me` with signature replaced | 401 |
 | Token with `role` edited `Student`→`Admin`, original signature | 401 |
 | Token with header downgraded to `alg: none` | 401 |
-| `/api/admin/assignments` as Admin | 200 |
-| `/api/admin/assignments` as Teacher or Student | 403 |
+| `/api/admin/assignments` and `/api/admin/submissions` as Admin | 200 |
+| Either admin route as Teacher or Student | 403 |
 | A teacher route as Student or Admin | 403 |
+| A student route as Teacher or Admin | 403 |
 | Unknown email vs wrong password | Identical 401 body (bar the per-request `traceId`) |
 | Malformed login body | 400 with field-level `errors` |
 
@@ -145,7 +147,8 @@ Deliberately out of scope for this project:
 - **Role checks are only the outer gate.** `[Authorize(Roles = ...)]` answers "is
   this a Teacher"; it cannot answer "is this teacher assigned to *this* class" or
   "is this assignment theirs". Those questions are answered per feature, in the
-  Application service that owns the rule — for assignments, in
-  [assignments.md](assignments.md#business-rules). A green role check is never
+  Application service that owns the rule — see
+  [assignments.md](assignments.md#business-rules) and
+  [submissions.md](submissions.md#business-rules). A green role check is never
   sufficient on its own, and the 403-versus-404 choice belongs to the rule rather
   than to the middleware.

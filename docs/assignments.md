@@ -3,8 +3,9 @@
 Teacher authoring with a draft/publish workflow, a student read side scoped to
 the student's own class, and an admin read side over everything.
 
-Submissions and grading are **not** part of this feature; a few rules below
-anticipate them and say so.
+Submissions and grading are a separate feature — see
+[submissions.md](submissions.md). A few rules below exist to make room for them and
+say so.
 
 > Rolls up into the README's *Features*, *Assumptions* and *Known Limitations*
 > sections when that is written. See [auth.md](auth.md) for how the caller's
@@ -47,6 +48,7 @@ One rule per code, applied everywhere. The mapping lives in exactly one place,
 | `403` | The caller has no standing over this class/subject at all, or holds the wrong role. |
 | `404` | Absent, or not the caller's to see. |
 | `409` | Well-formed, but the assignment's current state forbids the transition. |
+| `422` | Not used by this feature. Reserved for a value out of range for the resource it targets — see [submissions.md](submissions.md#status-codes). |
 
 ### Why 403 on create but 404 on update
 
@@ -114,11 +116,11 @@ on the shape, and `UpdateAsync_OnAPublishedAssignment_LeavesItPublished` on the
 behaviour. Withdrawing published work is a different operation from editing it
 and is out of scope.
 
-**Rule 7 anticipates submissions.** A draft cannot have submissions, because
-students never see drafts, so today the rule costs nothing. Once submissions
-exist, deleting a published assignment would either orphan or cascade them; the
-foreign keys are `Restrict`, so it would fail at the database instead. Rejecting
-it here means a clear `409` rather than a `500` later.
+**Rule 7 is what makes submissions safe.** A draft cannot have submissions, because
+students never see drafts, so the rule costs nothing in practice. A published
+assignment can, and deleting one would either orphan or cascade them — the foreign
+keys are `Restrict`, so it would fail at the database. Rejecting it in the service
+means a clear `409` explaining why rather than a `500` from a constraint.
 
 **Rule 8 is enforced by the database.** `AssignmentQueries.VisibleToStudent` is a
 single `Expression` — published, and this class — that both the list query and
