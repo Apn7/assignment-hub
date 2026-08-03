@@ -14,9 +14,10 @@ public sealed class AssignmentService : IAssignmentService
     /// One message for every not-found outcome. A missing assignment, a
     /// colleague's assignment, a draft a student probed for and another class's
     /// assignment all produce this exact string, so a caller holding an id learns
-    /// nothing about whether it exists.
+    /// nothing about whether it exists. Shared with <c>SubmissionService</c>, which
+    /// answers for the same resource on its own routes.
     /// </summary>
-    private const string NotFoundMessage = "Assignment not found.";
+    private const string NotFoundMessage = NotFoundMessages.Assignment;
 
     /// <summary>
     /// Used only where the caller supplied the class and subject themselves, so
