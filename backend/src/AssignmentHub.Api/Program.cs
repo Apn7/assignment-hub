@@ -1,10 +1,9 @@
 using System.Diagnostics;
-using System.Security.Claims;
 using System.Text;
-using AssignmentHub.Api.Configuration;
 using AssignmentHub.Api.Contracts;
 using AssignmentHub.Api.Middleware;
 using AssignmentHub.Application;
+using AssignmentHub.Application.Common;
 using AssignmentHub.Infrastructure;
 using AssignmentHub.Infrastructure.Persistence.Seed;
 using FluentValidation.AspNetCore;
@@ -149,6 +148,13 @@ builder.Services
     {
         options.RequireHttpsMetadata = !builder.Environment.IsDevelopment();
         options.SaveToken = true;
+
+        // Off by default the handler rewrites short JWT claim names into long WIF
+        // URIs ("sub" becomes ...nameidentifier). Disabling that keeps the claims
+        // exactly as JwtTokenGenerator issued them, so what we sign is what
+        // AuthController reads back — no hidden translation table.
+        options.MapInboundClaims = false;
+
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -160,8 +166,11 @@ builder.Services
             ValidateLifetime = true,
             // Default is 5 minutes, which makes short-lived-token tests unreliable.
             ClockSkew = TimeSpan.FromSeconds(30),
-            NameClaimType = ClaimTypes.Name,
-            RoleClaimType = ClaimTypes.Role
+
+            // Must match the claim names above, or [Authorize(Roles = ...)] silently
+            // never matches and every role check returns 403.
+            NameClaimType = AppClaimTypes.Name,
+            RoleClaimType = AppClaimTypes.Role
         };
     });
 
