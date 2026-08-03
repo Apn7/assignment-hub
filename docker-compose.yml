@@ -1,0 +1,26 @@
+services:
+  db:
+    image: postgres:16
+    container_name: assignmenthub-db
+    restart: unless-stopped
+    environment:
+      # Local development only. Production credentials come from the deployment
+      # environment, never from this file.
+      POSTGRES_USER: assignmenthub
+      POSTGRES_PASSWORD: assignmenthub
+      POSTGRES_DB: assignmenthub
+    ports:
+      - "5432:5432"
+    volumes:
+      - assignmenthub-db-data:/var/lib/postgresql/data
+    healthcheck:
+      # Lets `docker compose up -d --wait db` block until Postgres accepts
+      # connections, so `dotnet ef database update` cannot run too early.
+      test: ["CMD-SHELL", "pg_isready -U assignmenthub -d assignmenthub"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+volumes:
+  assignmenthub-db-data:
