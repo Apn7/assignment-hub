@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Text;
+using System.Text.Json.Serialization;
 using AssignmentHub.Api.Contracts;
 using AssignmentHub.Api.Middleware;
 using AssignmentHub.Application;
@@ -66,7 +67,14 @@ builder.Services.AddInfrastructure(builder.Configuration);
 // ---------------------------------------------------------------------------
 // MVC, validation and the consistent error contract
 // ---------------------------------------------------------------------------
-builder.Services.AddControllers();
+// Enum-valued request fields accept their names as well as their numbers, so a
+// client can post "Submitted" rather than 1. Responses already send enum names —
+// the DTOs project them with ToString() — so this only affects what is accepted,
+// not what is returned.
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+
 builder.Services.AddFluentValidationAutoValidation();
 
 // Model-binding and validation failures are reshaped into ApiErrorResponse so a
