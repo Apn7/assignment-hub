@@ -1,6 +1,9 @@
+using AssignmentHub.Application.Interfaces;
 using AssignmentHub.Domain.Entities;
 using AssignmentHub.Infrastructure.Persistence;
 using AssignmentHub.Infrastructure.Persistence.Seed;
+using AssignmentHub.Infrastructure.Repositories;
+using AssignmentHub.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -33,14 +36,21 @@ public static class DependencyInjection
 
         services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
 
-        // Identity.Core's PBKDF2 hasher. Registered for the seeder now and reused
-        // by login/registration later, so there is only ever one hashing policy.
+        // Injectable clock. Token expiry uses it today; the submission deadline rules
+        // will need it to be mockable in tests tomorrow.
+        services.AddSingleton(TimeProvider.System);
+
+        // Identity's PBKDF2 hasher, wrapped so Application sees only IPasswordHasher.
+        // Both the seeder and the login path resolve this, so there is exactly one
+        // hashing policy in the system.
         services.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
+        services.AddSingleton<IPasswordHasher, IdentityPasswordHasher>();
+
+        services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
+
+        services.AddScoped<IUserRepository, UserRepository>();
 
         services.AddScoped<DataSeeder>();
-
-        // Repositories and other Application-interface implementations are
-        // registered here as they are introduced.
 
         return services;
     }

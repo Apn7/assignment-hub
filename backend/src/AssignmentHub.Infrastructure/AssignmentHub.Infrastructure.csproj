@@ -19,6 +19,10 @@
     <!-- PasswordHasher<User> for the development seeder. Identity.Core only: no
          ASP.NET Core Identity stores, UI or EF schema are used. -->
     <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="8.0.29" />
+    <!-- JWT signing. Pinned to 7.7.3 to match the Microsoft.IdentityModel.* graph
+         that Microsoft.AspNetCore.Authentication.JwtBearer 8.0.29 resolves, so the
+         Api validates tokens with the same assemblies that signed them. -->
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.7.3" />
   </ItemGroup>
 
 </Project>
