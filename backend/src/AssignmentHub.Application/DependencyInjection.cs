@@ -1,3 +1,5 @@
+using AssignmentHub.Application.Interfaces;
+using AssignmentHub.Application.Services;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,8 +16,7 @@ public static class DependencyInjection
         // Picks up every AbstractValidator<T> in this assembly as it is added.
         services.AddValidatorsFromAssemblyContaining(typeof(DependencyInjection));
 
-        // Application services (assignment, submission, grading, ...) are
-        // registered here as they are introduced.
+        services.AddScoped<IAuthService, AuthService>();
 
         return services;
     }
