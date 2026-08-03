@@ -64,6 +64,9 @@ public abstract class ApiControllerBase : ControllerBase
             ResultStatus.NotFound => StatusCodes.Status404NotFound,
             // Well-formed, but the stored state forbids the transition.
             ResultStatus.Conflict => StatusCodes.Status409Conflict,
+            // Well-formed and permitted, but a value is out of range for the
+            // resource it targets — 12 marks on an assignment worth 10.
+            ResultStatus.Unprocessable => StatusCodes.Status422UnprocessableEntity,
             _ => throw new InvalidOperationException(
                 $"{result.Status} is not a failure status and has no HTTP mapping.")
         };

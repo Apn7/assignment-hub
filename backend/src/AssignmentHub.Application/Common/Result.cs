@@ -19,7 +19,18 @@ public enum ResultStatus
     NotFound = 3,
 
     /// <summary>Well-formed, but the resource's current state forbids it. → 409</summary>
-    Conflict = 4
+    Conflict = 4,
+
+    /// <summary>
+    /// Understood and well-formed, but a value is out of range for the resource it
+    /// is aimed at — awarding 12 marks out of 10. → 422
+    /// </summary>
+    /// <remarks>
+    /// Distinct from <see cref="ValidationFailed"/>, which is reserved for requests
+    /// that are wrong without reference to anything stored. The same body may be
+    /// perfectly valid against a different assignment, so the edge cannot judge it.
+    /// </remarks>
+    Unprocessable = 5
 }
 
 /// <summary>
@@ -55,6 +66,8 @@ public class Result
     public static Result NotFound(string error) => new(ResultStatus.NotFound, error);
 
     public static Result Conflict(string error) => new(ResultStatus.Conflict, error);
+
+    public static Result Unprocessable(string error) => new(ResultStatus.Unprocessable, error);
 }
 
 /// <summary>Result of an operation that returns a value on success.</summary>
@@ -81,4 +94,6 @@ public sealed class Result<T> : Result
     public static new Result<T> NotFound(string error) => new(ResultStatus.NotFound, error, default);
 
     public static new Result<T> Conflict(string error) => new(ResultStatus.Conflict, error, default);
+
+    public static new Result<T> Unprocessable(string error) => new(ResultStatus.Unprocessable, error, default);
 }
