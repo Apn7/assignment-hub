@@ -3,6 +3,7 @@ using AssignmentHub.Application.Common;
 using AssignmentHub.Domain.Entities;
 using AssignmentHub.Domain.Enums;
 using AssignmentHub.Infrastructure.Services;
+using AssignmentHub.Tests.TestDoubles;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -113,15 +114,5 @@ public class JwtTokenGeneratorTests
 
         first.Id.Should().NotBeNullOrEmpty();
         first.Id.Should().NotBe(second.Id);
-    }
-
-    /// <summary>Minimal frozen clock, so expiry assertions are exact.</summary>
-    private sealed class FakeTimeProvider : TimeProvider
-    {
-        private readonly DateTimeOffset _utcNow;
-
-        public FakeTimeProvider(DateTimeOffset utcNow) => _utcNow = utcNow;
-
-        public override DateTimeOffset GetUtcNow() => _utcNow;
     }
 }
