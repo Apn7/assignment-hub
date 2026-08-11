@@ -1,4 +1,5 @@
 using AssignmentHub.Application.Interfaces;
+using AssignmentHub.Domain.Entities;
 using AssignmentHub.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,5 +28,19 @@ public sealed class TeacherAssignmentRepository : ITeacherAssignmentRepository
                                  && teacherAssignment.ClassRoomId == classRoomId
                                  && teacherAssignment.SubjectId == subjectId,
             cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<TeacherAssignment>> ListForTeacherAsync(
+        Guid teacherId,
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.TeacherAssignments
+            .AsNoTracking()
+            .Include(ta => ta.ClassRoom)
+            .Include(ta => ta.Subject)
+            .Where(ta => ta.TeacherId == teacherId)
+            .OrderBy(ta => ta.ClassRoom.Name)
+            .ThenBy(ta => ta.Subject.Name)
+            .ToListAsync(cancellationToken);
     }
 }

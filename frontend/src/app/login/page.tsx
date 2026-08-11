@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import { useForm } from "react-hook-form";
-import { z } from "zod/v4";
+import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -10,7 +10,7 @@ import { api } from "@/lib/api/client";
 import { saveSession, roleHome } from "@/lib/auth";
 
 const schema = z.object({
-  email: z.email("Enter a valid email"),
+  email: z.string().email("Enter a valid email"),
   password: z.string().min(1, "Password is required"),
 });
 type FormData = z.infer<typeof schema>;

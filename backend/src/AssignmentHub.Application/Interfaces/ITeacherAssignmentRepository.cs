@@ -18,4 +18,11 @@ public interface ITeacherAssignmentRepository
         Guid classRoomId,
         Guid subjectId,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Lists all class/subject pairs assigned to this teacher.
+    /// </summary>
+    Task<IReadOnlyList<TeacherAssignment>> ListForTeacherAsync(
+        Guid teacherId,
+        CancellationToken cancellationToken = default);
 }
