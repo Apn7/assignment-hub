@@ -16,7 +16,6 @@ export default function AdminDashboardPage() {
   const [assignmentStatusFilter, setAssignmentStatusFilter] = useState<string>("");
   const [submissionStatusFilter, setSubmissionStatusFilter] = useState<string>("");
 
-  // Fetch all assignments for admin
   const {
     data: assignments,
     isLoading: assignmentsLoading,
@@ -32,7 +31,6 @@ export default function AdminDashboardPage() {
     enabled: activeTab === "assignments",
   });
 
-  // Fetch all submissions for admin
   const {
     data: submissions,
     isLoading: submissionsLoading,
@@ -51,23 +49,23 @@ export default function AdminDashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight text-gray-900">
+        <h2 className="text-3xl font-serif font-bold tracking-tight text-[#1F1D1A]">
           Admin Read-Only Overview
         </h2>
-        <p className="mt-1 text-sm text-gray-500">
+        <p className="mt-1 text-xs text-[#7C766C]">
           System-wide audit view across all classes, subjects, teachers, and students.
         </p>
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-gray-200">
+      <div className="flex border-b border-[#E6E2D6]">
         <button
           type="button"
           onClick={() => setActiveTab("assignments")}
-          className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+          className={`px-5 py-2.5 text-xs font-semibold border-b-2 transition-colors ${
             activeTab === "assignments"
-              ? "border-blue-600 text-blue-600"
-              : "border-transparent text-gray-500 hover:text-gray-700"
+              ? "border-[#2D2926] text-[#1F1D1A]"
+              : "border-transparent text-[#7C766C] hover:text-[#1F1D1A]"
           }`}
         >
           All Assignments
@@ -75,10 +73,10 @@ export default function AdminDashboardPage() {
         <button
           type="button"
           onClick={() => setActiveTab("submissions")}
-          className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+          className={`px-5 py-2.5 text-xs font-semibold border-b-2 transition-colors ${
             activeTab === "submissions"
-              ? "border-blue-600 text-blue-600"
-              : "border-transparent text-gray-500 hover:text-gray-700"
+              ? "border-[#2D2926] text-[#1F1D1A]"
+              : "border-transparent text-[#7C766C] hover:text-[#1F1D1A]"
           }`}
         >
           All Submissions
@@ -89,15 +87,15 @@ export default function AdminDashboardPage() {
       {activeTab === "assignments" && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            <span className="text-xs font-semibold text-[#7C766C] uppercase tracking-wider">
               System Assignments ({assignments?.length ?? 0})
             </span>
             <div className="flex items-center gap-2">
-              <label className="text-xs text-gray-600">Filter Status:</label>
+              <label className="text-xs text-[#7C766C]">Filter Status:</label>
               <select
                 value={assignmentStatusFilter}
                 onChange={(e) => setAssignmentStatusFilter(e.target.value)}
-                className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 focus:border-blue-500 focus:outline-none"
+                className="rounded-lg border border-[#E6E2D6] bg-white px-3 py-1.5 text-xs font-medium text-[#1F1D1A] focus:outline-none"
               >
                 <option value="">All Statuses</option>
                 <option value="Draft">Draft</option>
@@ -119,11 +117,11 @@ export default function AdminDashboardPage() {
               description="No assignments match the selected filter."
             />
           ) : (
-            <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-              <table className="w-full text-left text-sm text-gray-600">
-                <thead className="bg-gray-50 text-xs uppercase font-semibold text-gray-700 border-b border-gray-200">
+            <div className="overflow-hidden rounded-2xl border border-[#E6E2D6] bg-[#FFFFFF] shadow-xs">
+              <table className="w-full text-left text-sm text-[#45413C]">
+                <thead className="bg-[#F8F6F0] text-xs uppercase font-semibold text-[#7C766C] border-b border-[#E6E2D6] tracking-wider">
                   <tr>
-                    <th className="px-6 py-3.5">Title</th>
+                    <th className="px-6 py-3.5 font-serif font-bold text-[#1F1D1A]">Title</th>
                     <th className="px-6 py-3.5">Class</th>
                     <th className="px-6 py-3.5">Subject</th>
                     <th className="px-6 py-3.5">Teacher</th>
@@ -132,22 +130,22 @@ export default function AdminDashboardPage() {
                     <th className="px-6 py-3.5">Max Marks</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody className="divide-y divide-[#F0EDE4]">
                   {assignments.map((a) => (
-                    <tr key={a.id} className="hover:bg-gray-50/80">
-                      <td className="px-6 py-4 font-medium text-gray-900">
+                    <tr key={a.id} className="hover:bg-[#FBF9F5]">
+                      <td className="px-6 py-4 font-semibold text-[#1F1D1A]">
                         {a.title}
                       </td>
-                      <td className="px-6 py-4 text-gray-700">{a.classRoomName}</td>
-                      <td className="px-6 py-4 text-gray-700">{a.subjectName}</td>
-                      <td className="px-6 py-4 text-gray-700">{a.createdByTeacherName}</td>
+                      <td className="px-6 py-4 text-[#45413C]">{a.classRoomName}</td>
+                      <td className="px-6 py-4 text-[#45413C]">{a.subjectName}</td>
+                      <td className="px-6 py-4 text-[#45413C]">{a.createdByTeacherName}</td>
                       <td className="px-6 py-4">
                         <StatusBadge status={a.status} />
                       </td>
-                      <td className="px-6 py-4 text-gray-700">
+                      <td className="px-6 py-4 text-[#45413C] text-xs">
                         {formatDateTime(a.deadline)}
                       </td>
-                      <td className="px-6 py-4 font-mono text-gray-700">
+                      <td className="px-6 py-4 font-mono font-semibold text-[#1F1D1A] text-xs">
                         {a.maxMarks}
                       </td>
                     </tr>
@@ -163,15 +161,15 @@ export default function AdminDashboardPage() {
       {activeTab === "submissions" && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            <span className="text-xs font-semibold text-[#7C766C] uppercase tracking-wider">
               System Submissions ({submissions?.length ?? 0})
             </span>
             <div className="flex items-center gap-2">
-              <label className="text-xs text-gray-600">Filter Status:</label>
+              <label className="text-xs text-[#7C766C]">Filter Status:</label>
               <select
                 value={submissionStatusFilter}
                 onChange={(e) => setSubmissionStatusFilter(e.target.value)}
-                className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 focus:border-blue-500 focus:outline-none"
+                className="rounded-lg border border-[#E6E2D6] bg-white px-3 py-1.5 text-xs font-medium text-[#1F1D1A] focus:outline-none"
               >
                 <option value="">All Statuses</option>
                 <option value="Submitted">Submitted</option>
@@ -193,11 +191,11 @@ export default function AdminDashboardPage() {
               description="No student submissions match the selected filter."
             />
           ) : (
-            <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-              <table className="w-full text-left text-sm text-gray-600">
-                <thead className="bg-gray-50 text-xs uppercase font-semibold text-gray-700 border-b border-gray-200">
+            <div className="overflow-hidden rounded-2xl border border-[#E6E2D6] bg-[#FFFFFF] shadow-xs">
+              <table className="w-full text-left text-sm text-[#45413C]">
+                <thead className="bg-[#F8F6F0] text-xs uppercase font-semibold text-[#7C766C] border-b border-[#E6E2D6] tracking-wider">
                   <tr>
-                    <th className="px-6 py-3.5">Assignment</th>
+                    <th className="px-6 py-3.5 font-serif font-bold text-[#1F1D1A]">Assignment</th>
                     <th className="px-6 py-3.5">Class</th>
                     <th className="px-6 py-3.5">Student</th>
                     <th className="px-6 py-3.5">Status</th>
@@ -205,21 +203,21 @@ export default function AdminDashboardPage() {
                     <th className="px-6 py-3.5">Score</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody className="divide-y divide-[#F0EDE4]">
                   {submissions.map((sub) => (
-                    <tr key={sub.id} className="hover:bg-gray-50/80">
-                      <td className="px-6 py-4 font-medium text-gray-900">
+                    <tr key={sub.id} className="hover:bg-[#FBF9F5]">
+                      <td className="px-6 py-4 font-semibold text-[#1F1D1A]">
                         {sub.assignmentTitle}
                       </td>
-                      <td className="px-6 py-4 text-gray-700">{sub.classRoomName}</td>
-                      <td className="px-6 py-4 text-gray-700">{sub.studentName}</td>
+                      <td className="px-6 py-4 text-[#45413C]">{sub.classRoomName}</td>
+                      <td className="px-6 py-4 text-[#45413C]">{sub.studentName}</td>
                       <td className="px-6 py-4">
                         <StatusBadge status={sub.status} />
                       </td>
-                      <td className="px-6 py-4 text-gray-700">
+                      <td className="px-6 py-4 text-[#45413C] text-xs">
                         {formatDateTime(sub.submittedAt)}
                       </td>
-                      <td className="px-6 py-4 font-mono font-medium text-gray-900">
+                      <td className="px-6 py-4 font-mono font-semibold text-[#1F1D1A] text-xs">
                         {sub.marks !== null ? `${sub.marks} / ${sub.maxMarks}` : "Ungraded"}
                       </td>
                     </tr>

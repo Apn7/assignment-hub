@@ -28,7 +28,6 @@ export default function StudentDashboardPage() {
       />
     );
 
-  // Order by deadline nearest first
   const sortedAssignments = data
     ? [...data].sort(
         (a, b) => new Date(a.deadline).getTime() - new Date(b.deadline).getTime()
@@ -38,11 +37,11 @@ export default function StudentDashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight text-gray-900">
+        <h2 className="text-3xl font-serif font-bold tracking-tight text-[#1F1D1A]">
           Class Assignments
         </h2>
-        <p className="mt-1 text-sm text-gray-500">
-          View and submit coursework assigned to your class.
+        <p className="mt-1 text-xs text-[#7C766C]">
+          Coursework assigned to your class, ordered by due date.
         </p>
       </div>
 
@@ -52,49 +51,51 @@ export default function StudentDashboardPage() {
           description="Your teachers have not published any assignments for your class."
         />
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {sortedAssignments.map((assignment) => {
             const isOverdue = isPastDeadline(assignment.deadline);
 
             return (
               <div
                 key={assignment.id}
-                className={`flex flex-col justify-between rounded-xl border bg-white p-5 shadow-sm transition-all hover:shadow-md ${
-                  isOverdue ? "border-red-200 bg-red-50/20" : "border-gray-200"
+                className={`flex flex-col justify-between rounded-2xl border bg-[#FFFFFF] p-6 shadow-xs transition-all hover:shadow-md ${
+                  isOverdue
+                    ? "border-[#F2C2C2] bg-[#FDF9F9]"
+                    : "border-[#E6E2D6]"
                 }`}
               >
                 <div className="space-y-3">
                   <div className="flex items-start justify-between gap-2">
-                    <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-700">
+                    <span className="inline-flex items-center rounded-md bg-[#F0F4F8] px-2.5 py-1 text-xs font-semibold text-[#1D4A6E]">
                       {assignment.subjectName}
                     </span>
                     {isOverdue ? (
-                      <span className="inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-800">
+                      <span className="inline-flex items-center rounded-full bg-[#FDF4F4] border border-[#F2C2C2] px-2.5 py-0.5 text-xs font-semibold text-[#8C2A2A]">
                         Closed / Overdue
                       </span>
                     ) : (
-                      <span className="inline-flex items-center rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-800">
+                      <span className="inline-flex items-center rounded-full bg-[#F0F7F4] border border-[#D4E8DF] px-2.5 py-0.5 text-xs font-semibold text-[#1E5641]">
                         Open
                       </span>
                     )}
                   </div>
 
                   <div>
-                    <h3 className="font-bold text-gray-900 text-lg line-clamp-2">
+                    <h3 className="font-serif font-bold text-[#1F1D1A] text-xl line-clamp-2">
                       {assignment.title}
                     </h3>
-                    <p className="mt-1 text-xs text-gray-500 line-clamp-3">
+                    <p className="mt-2 text-xs text-[#7C766C] line-clamp-3 leading-relaxed">
                       {assignment.description}
                     </p>
                   </div>
                 </div>
 
-                <div className="mt-5 pt-4 border-t border-gray-100 flex items-center justify-between text-xs">
+                <div className="mt-6 pt-4 border-t border-[#F0EDE4] flex items-center justify-between text-xs">
                   <div>
-                    <span className="text-gray-500 block">Due Date:</span>
+                    <span className="text-[#7C766C] block">Due Date:</span>
                     <span
                       className={`font-semibold ${
-                        isOverdue ? "text-red-600" : "text-gray-700"
+                        isOverdue ? "text-[#8C2A2A]" : "text-[#1F1D1A]"
                       }`}
                     >
                       {formatDateTime(assignment.deadline)}
@@ -102,7 +103,7 @@ export default function StudentDashboardPage() {
                   </div>
                   <Link
                     href={`/student/assignments/${assignment.id}`}
-                    className="rounded-lg bg-blue-600 px-3 py-1.5 font-semibold text-white hover:bg-blue-700 transition-colors"
+                    className="rounded-lg bg-[#2D2926] hover:bg-[#1F1D1A] px-3.5 py-1.5 font-semibold text-[#FBF9F5] transition-colors shadow-xs"
                   >
                     View Task →
                   </Link>

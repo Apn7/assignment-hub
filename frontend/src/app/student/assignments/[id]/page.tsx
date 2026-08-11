@@ -26,7 +26,6 @@ export default function StudentAssignmentDetailPage() {
   const [inlineError, setInlineError] = useState<string | null>(null);
   const [inlineSuccess, setInlineSuccess] = useState<string | null>(null);
 
-  // Fetch assignment detail
   const {
     data: assignment,
     isLoading: assignmentLoading,
@@ -42,7 +41,6 @@ export default function StudentAssignmentDetailPage() {
     },
   });
 
-  // Fetch student's submission (404 = not submitted yet)
   const {
     data: submission,
     isLoading: submissionLoading,
@@ -58,21 +56,19 @@ export default function StudentAssignmentDetailPage() {
         return res.data;
       } catch (err: unknown) {
         if (axios.isAxiosError(err) && err.response?.status === 404) {
-          return null; // Not submitted yet
+          return null;
         }
         throw err;
       }
     },
   });
 
-  // Pre-fill answer input when existing submission loads
   useEffect(() => {
     if (submission) {
       setAnswerText(submission.answerText);
     }
   }, [submission]);
 
-  // Mutations
   const submitMutation = useMutation<
     SubmissionResponse,
     unknown,
@@ -160,121 +156,118 @@ export default function StudentAssignmentDetailPage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      {/* Top Navigation */}
       <div className="flex items-center justify-between">
         <Link
           href="/student"
-          className="text-sm font-semibold text-gray-600 hover:text-gray-900"
+          className="text-xs font-semibold text-[#8C7B6B] hover:text-[#1F1D1A]"
         >
           ← Back to Assignments
         </Link>
-        <span className="text-xs text-gray-500 font-mono">
+        <span className="text-xs text-[#7C766C] font-mono">
           Max Marks: {assignment.maxMarks}
         </span>
       </div>
 
       {/* Assignment Overview Header */}
-      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm space-y-4">
+      <div className="rounded-2xl border border-[#E6E2D6] bg-[#FFFFFF] p-7 shadow-xs space-y-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <span className="inline-flex items-center rounded-md bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700 mb-2">
+            <span className="inline-flex items-center rounded-md bg-[#F0F4F8] px-2.5 py-1 text-xs font-semibold text-[#1D4A6E] mb-2">
               {assignment.subjectName} — {assignment.classRoomName}
             </span>
-            <h2 className="text-2xl font-bold text-gray-900">
+            <h2 className="text-3xl font-serif font-bold text-[#1F1D1A]">
               {assignment.title}
             </h2>
           </div>
           {isClosed ? (
-            <span className="inline-flex items-center rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-800">
+            <span className="inline-flex items-center rounded-full bg-[#FDF4F4] border border-[#F2C2C2] px-3 py-1 text-xs font-semibold text-[#8C2A2A]">
               Deadline Passed
             </span>
           ) : (
-            <span className="inline-flex items-center rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800">
+            <span className="inline-flex items-center rounded-full bg-[#F0F7F4] border border-[#D4E8DF] px-3 py-1 text-xs font-semibold text-[#1E5641]">
               Open for Submission
             </span>
           )}
         </div>
 
-        <div className="prose prose-sm text-gray-700 bg-gray-50 p-4 rounded-lg border border-gray-100 whitespace-pre-wrap font-sans">
+        <div className="text-sm text-[#45413C] bg-[#FBF9F5] p-5 rounded-xl border border-[#E6E2D6] whitespace-pre-wrap font-sans leading-relaxed">
           {assignment.description}
         </div>
 
-        <div className="flex flex-wrap items-center justify-between text-xs text-gray-500 pt-2 border-t border-gray-100">
+        <div className="flex flex-wrap items-center justify-between text-xs text-[#7C766C] pt-2 border-t border-[#F0EDE4]">
           <span>Teacher: {assignment.createdByTeacherName}</span>
-          <span>Due: <strong className="text-gray-700">{formatDateTime(assignment.deadline)}</strong></span>
+          <span>Due: <strong className="text-[#1F1D1A]">{formatDateTime(assignment.deadline)}</strong></span>
         </div>
       </div>
 
-      {/* Inline Response Alerts */}
+      {/* Inline Alerts */}
       {inlineError && (
-        <div className="rounded-xl bg-red-50 p-4 text-sm text-red-700 font-medium border border-red-200">
+        <div className="rounded-xl bg-[#FDF4F4] border border-[#F2C2C2] p-4 text-xs text-[#8C2A2A] font-medium">
           {inlineError}
         </div>
       )}
       {inlineSuccess && (
-        <div className="rounded-xl bg-emerald-50 p-4 text-sm text-emerald-700 font-medium border border-emerald-200">
+        <div className="rounded-xl bg-[#F0F7F4] border border-[#D4E8DF] p-4 text-xs text-[#1E5641] font-medium">
           {inlineSuccess}
         </div>
       )}
 
-      {/* RENDER BY STATE */}
-
       {/* STATE 3: Reviewed */}
       {isReviewed && submission && (
-        <div className="rounded-xl border border-purple-200 bg-purple-50/40 p-6 shadow-sm space-y-5">
-          <div className="flex items-center justify-between border-b border-purple-100 pb-3">
+        <div className="rounded-2xl border border-[#E6D6EB] bg-[#F7F2F8]/60 p-7 shadow-xs space-y-5">
+          <div className="flex items-center justify-between border-b border-[#E6D6EB] pb-3">
             <div className="flex items-center gap-3">
-              <h3 className="text-lg font-semibold text-purple-950">
+              <h3 className="text-xl font-serif font-bold text-[#5C2B66]">
                 Grade & Teacher Feedback
               </h3>
               <StatusBadge status={submission.status} />
             </div>
             <div className="text-right">
-              <span className="text-2xl font-extrabold text-purple-900 font-mono">
+              <span className="text-3xl font-extrabold text-[#5C2B66] font-mono">
                 {submission.marks} / {submission.maxMarks}
               </span>
-              <span className="text-xs text-purple-600 block">Marks Awarded</span>
+              <span className="text-xs text-[#5C2B66] block">Marks Awarded</span>
             </div>
           </div>
 
           {submission.feedback && (
             <div>
-              <label className="block text-xs font-semibold text-purple-900 uppercase tracking-wider mb-1">
+              <label className="block text-xs font-semibold text-[#5C2B66] uppercase tracking-wider mb-1">
                 Teacher Feedback
               </label>
-              <p className="text-sm text-purple-900 bg-white p-3 rounded-lg border border-purple-200 italic">
+              <p className="text-sm text-[#5C2B66] bg-white p-4 rounded-xl border border-[#E6D6EB] italic leading-relaxed">
                 "{submission.feedback}"
               </p>
             </div>
           )}
 
-          <div className="text-xs text-purple-700 flex justify-between pt-1">
+          <div className="text-xs text-[#5C2B66] flex justify-between pt-1">
             <span>Reviewed at: {formatDateTime(submission.reviewedAt)}</span>
             <span>Reviewed work is read-only unless reopened by teacher.</span>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+            <label className="block text-xs font-semibold text-[#45413C] uppercase tracking-wider mb-1">
               Your Submitted Answer
             </label>
-            <div className="rounded-lg bg-white p-4 text-sm text-gray-800 border border-gray-200 whitespace-pre-wrap font-mono">
+            <div className="rounded-xl bg-white p-4 text-xs text-[#1F1D1A] border border-[#E6E2D6] whitespace-pre-wrap font-mono leading-relaxed">
               {submission.answerText}
             </div>
           </div>
         </div>
       )}
 
-      {/* STATE 2: Submitted & Deadline Future (Open for revision) */}
+      {/* STATE 2: Submitted & Deadline Future */}
       {!isReviewed && isSubmitted && !isClosed && (
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm space-y-5">
+        <div className="rounded-2xl border border-[#E6E2D6] bg-[#FFFFFF] p-7 shadow-xs space-y-5">
           {hasPreviousMarks && (
-            <div className="rounded-lg bg-amber-50 p-4 border border-amber-200 text-amber-800 text-sm font-medium">
+            <div className="rounded-xl bg-[#FFF8EB] p-4 border border-[#F2E3C6] text-[#855B14] text-xs font-medium">
               Previously marked {submission.marks} / {submission.maxMarks} — awaiting re-marking.
             </div>
           )}
 
-          <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-            <h3 className="text-lg font-semibold text-gray-900">
+          <div className="flex items-center justify-between border-b border-[#F0EDE4] pb-3">
+            <h3 className="text-xl font-serif font-bold text-[#1F1D1A]">
               Revise Your Submission
             </h3>
             <StatusBadge status={submission.status} />
@@ -282,26 +275,26 @@ export default function StudentAssignmentDetailPage() {
 
           <form onSubmit={handleSubmitOrUpdate} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-xs font-semibold text-[#45413C] uppercase tracking-wider mb-1">
                 Answer Text
               </label>
               <textarea
                 rows={6}
                 value={answerText}
                 onChange={(e) => setAnswerText(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 p-3 text-sm font-mono focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-xl border border-[#E6E2D6] p-4 text-xs text-[#1F1D1A] font-mono leading-relaxed focus:border-[#8C7B6B] focus:outline-none"
                 placeholder="Write your revised answer here..."
               />
             </div>
 
             <div className="flex items-center justify-between pt-2">
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-[#7C766C]">
                 Last updated: {formatDateTime(submission.updatedAt)}
               </span>
               <button
                 type="submit"
                 disabled={updateMutation.isPending}
-                className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
+                className="rounded-lg bg-[#2D2926] hover:bg-[#1F1D1A] px-5 py-2.5 text-xs font-semibold text-[#FBF9F5] disabled:opacity-50 shadow-xs"
               >
                 {updateMutation.isPending ? "Revising..." : "Update Submission"}
               </button>
@@ -310,23 +303,23 @@ export default function StudentAssignmentDetailPage() {
         </div>
       )}
 
-      {/* STATE 1: No Submission & Deadline Future (Open to submit) */}
+      {/* STATE 1: No Submission & Deadline Future */}
       {!isReviewed && !isSubmitted && !isClosed && (
-        <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm space-y-5">
-          <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-100 pb-3">
+        <div className="rounded-2xl border border-[#E6E2D6] bg-[#FFFFFF] p-7 shadow-xs space-y-5">
+          <h3 className="text-xl font-serif font-bold text-[#1F1D1A] border-b border-[#F0EDE4] pb-3">
             Submit Your Answer
           </h3>
 
           <form onSubmit={handleSubmitOrUpdate} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-xs font-semibold text-[#45413C] uppercase tracking-wider mb-1">
                 Answer Text
               </label>
               <textarea
                 rows={6}
                 value={answerText}
                 onChange={(e) => setAnswerText(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 p-3 text-sm font-mono focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-xl border border-[#E6E2D6] p-4 text-xs text-[#1F1D1A] font-mono leading-relaxed focus:border-[#8C7B6B] focus:outline-none"
                 placeholder="Type your complete answer here..."
               />
             </div>
@@ -335,7 +328,7 @@ export default function StudentAssignmentDetailPage() {
               <button
                 type="submit"
                 disabled={submitMutation.isPending}
-                className="rounded-lg bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
+                className="rounded-lg bg-[#2D2926] hover:bg-[#1F1D1A] px-6 py-2.5 text-xs font-semibold text-[#FBF9F5] disabled:opacity-50 shadow-xs"
               >
                 {submitMutation.isPending ? "Submitting..." : "Submit Answer"}
               </button>
@@ -346,12 +339,12 @@ export default function StudentAssignmentDetailPage() {
 
       {/* STATE 4: Deadline Passed & No Submission */}
       {!isReviewed && !isSubmitted && isClosed && (
-        <div className="rounded-xl border border-red-200 bg-red-50/50 p-8 text-center space-y-3">
-          <h3 className="text-lg font-bold text-red-900">
+        <div className="rounded-2xl border border-[#F2C2C2] bg-[#FDF4F4] p-8 text-center space-y-2">
+          <h3 className="text-xl font-serif font-bold text-[#8C2A2A]">
             Assignment Closed
           </h3>
-          <p className="text-sm text-red-700 max-w-md mx-auto">
-            The deadline for this assignment has passed and you did not submit an answer. No further submissions are accepted.
+          <p className="text-xs text-[#8C2A2A] max-w-md mx-auto">
+            The deadline for this assignment has passed and no answer was submitted. Submissions are no longer accepted.
           </p>
         </div>
       )}

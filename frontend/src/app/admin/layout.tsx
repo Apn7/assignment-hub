@@ -19,19 +19,32 @@ export default function AdminLayout({
 
   return (
     <RequireRole role="Admin">
-      <header className="flex items-center justify-between px-6 py-3 bg-white border-b shadow-sm">
-        <h1 className="text-lg font-semibold">Assignment Hub</h1>
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-gray-600">{user?.fullName}</span>
-          <button
-            onClick={handleLogout}
-            className="text-sm text-red-600 hover:underline"
-          >
-            Logout
-          </button>
-        </div>
-      </header>
-      <main className="p-6">{children}</main>
+      <div className="min-h-screen flex flex-col bg-[#FBF9F5]">
+        <header className="sticky top-0 z-40 bg-[#FFFFFF]/90 backdrop-blur-sm border-b border-[#E6E2D6] px-6 py-3.5 shadow-xs">
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <h1 className="text-xl font-serif font-bold text-[#1F1D1A] tracking-tight">
+                Assignment Hub
+              </h1>
+              <span className="rounded-full bg-[#F5F5F5] border border-[#E0E0E0] px-2.5 py-0.5 text-xs font-semibold text-[#424242]">
+                Admin Portal
+              </span>
+            </div>
+            <div className="flex items-center gap-4 text-xs">
+              <span className="font-medium text-[#45413C]">
+                {user?.fullName}
+              </span>
+              <button
+                onClick={handleLogout}
+                className="text-[#8C2A2A] hover:underline font-semibold"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </header>
+        <main className="flex-1 max-w-7xl w-full mx-auto p-6">{children}</main>
+      </div>
     </RequireRole>
   );
 }

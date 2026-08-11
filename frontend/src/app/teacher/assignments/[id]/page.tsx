@@ -61,7 +61,6 @@ export default function TeacherAssignmentDetailPage() {
   } = useQuery<AssignmentResponse>({
     queryKey: ["teacher", "assignment", assignmentId],
     queryFn: async () => {
-      // Mine list endpoint carries teacher's assignments
       const res = await api.get<AssignmentResponse[]>("/api/assignments/mine");
       const found = res.data.find((a) => a.id === assignmentId);
       if (!found) throw new Error("Assignment not found or unauthorized.");
@@ -104,7 +103,6 @@ export default function TeacherAssignmentDetailPage() {
       enabled: !!selectedSubmissionId,
     });
 
-  // Populate grade form when selected submission details load
   useEffect(() => {
     if (selectedSubmission) {
       setGradeMarks(selectedSubmission.marks ?? "");
@@ -113,7 +111,6 @@ export default function TeacherAssignmentDetailPage() {
     }
   }, [selectedSubmission]);
 
-  // Form setup
   const {
     register,
     handleSubmit,
@@ -165,7 +162,7 @@ export default function TeacherAssignmentDetailPage() {
     },
     onSuccess: () => {
       setShowPublishDialog(false);
-      setSuccessMessage("Assignment published successfully! Students in this class can now view it.");
+      setSuccessMessage("Assignment published! Students in this class can now view it.");
       queryClient.invalidateQueries({ queryKey: ["teacher", "assignment", assignmentId] });
       queryClient.invalidateQueries({ queryKey: ["teacher", "assignments", "mine"] });
     },
@@ -276,56 +273,56 @@ export default function TeacherAssignmentDetailPage() {
   return (
     <div className="max-w-5xl mx-auto space-y-8">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-200 pb-4">
+      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#E6E2D6] pb-4">
         <div>
           <div className="flex items-center gap-3">
-            <h2 className="text-2xl font-bold text-gray-900">
+            <h2 className="text-3xl font-serif font-bold text-[#1F1D1A]">
               {assignment.title}
             </h2>
             <StatusBadge status={assignment.status} />
           </div>
-          <p className="mt-1 text-sm text-gray-500">
-            {assignment.classRoomName} — {assignment.subjectName}
+          <p className="mt-1 text-xs text-[#7C766C]">
+            {assignment.classRoomName} • {assignment.subjectName}
           </p>
         </div>
         <Link
           href="/teacher"
-          className="text-sm font-semibold text-gray-600 hover:text-gray-900"
+          className="text-xs font-semibold text-[#8C7B6B] hover:text-[#1F1D1A]"
         >
           ← Back to Dashboard
         </Link>
       </div>
 
       {serverError && (
-        <div className="rounded-xl bg-red-50 p-4 text-sm text-red-700 font-medium border border-red-200">
+        <div className="rounded-xl bg-[#FDF4F4] border border-[#F2C2C2] p-4 text-xs text-[#8C2A2A] font-medium">
           {serverError}
         </div>
       )}
       {successMessage && (
-        <div className="rounded-xl bg-emerald-50 p-4 text-sm text-emerald-700 font-medium border border-emerald-200">
+        <div className="rounded-xl bg-[#F0F7F4] border border-[#D4E8DF] p-4 text-xs text-[#1E5641] font-medium">
           {successMessage}
         </div>
       )}
 
       {/* Assignment Edit Form */}
-      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm space-y-6">
-        <div className="flex items-center justify-between border-b border-gray-100 pb-3">
-          <h3 className="text-lg font-semibold text-gray-900">
-            Assignment Details
+      <div className="rounded-2xl border border-[#E6E2D6] bg-[#FFFFFF] p-7 shadow-xs space-y-6">
+        <div className="flex items-center justify-between border-b border-[#F0EDE4] pb-3">
+          <h3 className="text-base font-serif font-bold text-[#1F1D1A]">
+            Assignment Properties
           </h3>
           {!isPublished && (
             <div className="flex items-center gap-3">
               <button
                 type="button"
                 onClick={() => setShowDeleteDialog(true)}
-                className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50"
+                className="rounded-lg border border-[#F2C2C2] bg-[#FDF4F4] px-3 py-1.5 text-xs font-semibold text-[#8C2A2A] hover:bg-[#FBEAEA]"
               >
                 Delete Draft
               </button>
               <button
                 type="button"
                 onClick={() => setShowPublishDialog(true)}
-                className="rounded-lg bg-emerald-600 px-4 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700"
+                className="rounded-lg bg-[#1E5641] hover:bg-[#153D2E] px-4 py-1.5 text-xs font-semibold text-[#FFFFFF] shadow-xs"
               >
                 Publish Assignment
               </button>
@@ -335,26 +332,26 @@ export default function TeacherAssignmentDetailPage() {
 
         <form onSubmit={handleSubmit(onSubmitUpdate)} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-xs font-semibold text-[#45413C] uppercase tracking-wider mb-1">
               Title
             </label>
             <input
               {...register("title")}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-lg border border-[#E6E2D6] px-3.5 py-2 text-sm text-[#1F1D1A]"
             />
             {errors.title && (
-              <p className="mt-1 text-xs text-red-600">{errors.title.message}</p>
+              <p className="mt-1 text-xs text-[#8C2A2A] font-medium">{errors.title.message}</p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-xs font-semibold text-[#45413C] uppercase tracking-wider mb-1">
               Class & Subject
             </label>
             <select
               {...register("pair")}
               disabled={isPublished}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm bg-white focus:border-blue-500 focus:outline-none disabled:bg-gray-100 disabled:text-gray-500"
+              className="w-full rounded-lg border border-[#E6E2D6] px-3.5 py-2 text-sm text-[#1F1D1A] bg-white disabled:bg-[#F3EFE6] disabled:text-[#7C766C]"
             >
               {pairs?.map((p) => (
                 <option
@@ -366,23 +363,23 @@ export default function TeacherAssignmentDetailPage() {
               ))}
             </select>
             {isPublished && (
-              <p className="mt-1 text-xs text-amber-700">
+              <p className="mt-1 text-xs text-[#855B14]">
                 Hint: Class and subject are frozen once an assignment is published.
               </p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-xs font-semibold text-[#45413C] uppercase tracking-wider mb-1">
               Description
             </label>
             <textarea
               {...register("description")}
               rows={4}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-lg border border-[#E6E2D6] p-3.5 text-sm text-[#1F1D1A]"
             />
             {errors.description && (
-              <p className="mt-1 text-xs text-red-600">
+              <p className="mt-1 text-xs text-[#8C2A2A] font-medium">
                 {errors.description.message}
               </p>
             )}
@@ -390,33 +387,33 @@ export default function TeacherAssignmentDetailPage() {
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-xs font-semibold text-[#45413C] uppercase tracking-wider mb-1">
                 Deadline
               </label>
               <input
                 type="datetime-local"
                 {...register("deadlineLocal")}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                className="w-full rounded-lg border border-[#E6E2D6] px-3.5 py-2 text-sm text-[#1F1D1A]"
               />
               {isPublished && (
-                <p className="mt-1 text-xs text-amber-700">
+                <p className="mt-1 text-xs text-[#855B14]">
                   Hint: The deadline of a published assignment can only move later.
                 </p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-xs font-semibold text-[#45413C] uppercase tracking-wider mb-1">
                 Max Marks
               </label>
               <input
                 type="number"
                 {...register("maxMarks", { valueAsNumber: true })}
                 disabled={isPublished}
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none disabled:bg-gray-100 disabled:text-gray-500 font-mono"
+                className="w-full rounded-lg border border-[#E6E2D6] px-3.5 py-2 text-sm text-[#1F1D1A] font-mono disabled:bg-[#F3EFE6] disabled:text-[#7C766C]"
               />
               {isPublished && (
-                <p className="mt-1 text-xs text-amber-700">
+                <p className="mt-1 text-xs text-[#855B14]">
                   Hint: Maximum marks are frozen once published.
                 </p>
               )}
@@ -427,7 +424,7 @@ export default function TeacherAssignmentDetailPage() {
             <button
               type="submit"
               disabled={isSubmitting || updateMutation.isPending}
-              className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
+              className="rounded-lg bg-[#2D2926] hover:bg-[#1F1D1A] px-5 py-2 text-xs font-semibold text-[#FBF9F5] disabled:opacity-50 shadow-xs"
             >
               {isSubmitting || updateMutation.isPending
                 ? "Saving..."
@@ -439,13 +436,13 @@ export default function TeacherAssignmentDetailPage() {
 
       {/* Submissions Section (Published Only) */}
       {isPublished && (
-        <div className="space-y-6 pt-4 border-t border-gray-200">
+        <div className="space-y-6 pt-4 border-t border-[#E6E2D6]">
           <div className="flex items-center justify-between">
-            <h3 className="text-xl font-bold text-gray-900">
+            <h3 className="text-2xl font-serif font-bold text-[#1F1D1A]">
               Student Submissions
             </h3>
-            <span className="text-xs text-gray-500">
-              Select a submission to grade or review.
+            <span className="text-xs text-[#7C766C]">
+              Select a submission to review answer and grade.
             </span>
           </div>
 
@@ -459,8 +456,8 @@ export default function TeacherAssignmentDetailPage() {
           ) : (
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
               {/* Submissions List */}
-              <div className="lg:col-span-6 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
-                <ul className="divide-y divide-gray-200">
+              <div className="lg:col-span-6 overflow-hidden rounded-2xl border border-[#E6E2D6] bg-[#FFFFFF] shadow-xs">
+                <ul className="divide-y divide-[#F0EDE4]">
                   {submissions.map((sub) => {
                     const isSelected = selectedSubmissionId === sub.id;
                     return (
@@ -469,19 +466,19 @@ export default function TeacherAssignmentDetailPage() {
                         onClick={() => setSelectedSubmissionId(sub.id)}
                         className={`p-4 cursor-pointer transition-colors ${
                           isSelected
-                            ? "bg-blue-50/80 border-l-4 border-blue-600"
-                            : "hover:bg-gray-50"
+                            ? "bg-[#F3EFE6] border-l-4 border-[#2D2926]"
+                            : "hover:bg-[#FBF9F5]"
                         }`}
                       >
                         <div className="flex items-center justify-between">
-                          <p className="font-semibold text-sm text-gray-900">
+                          <p className="font-semibold text-sm text-[#1F1D1A]">
                             {sub.studentName}
                           </p>
                           <StatusBadge status={sub.status} />
                         </div>
-                        <div className="mt-2 flex items-center justify-between text-xs text-gray-500">
+                        <div className="mt-2 flex items-center justify-between text-xs text-[#7C766C]">
                           <span>Submitted: {formatDateTime(sub.submittedAt)}</span>
-                          <span className="font-medium text-gray-700">
+                          <span className="font-semibold text-[#1F1D1A] font-mono">
                             {sub.marks !== null ? `${sub.marks} / ${sub.maxMarks}` : "Ungraded"}
                           </span>
                         </div>
@@ -492,21 +489,21 @@ export default function TeacherAssignmentDetailPage() {
               </div>
 
               {/* Detail & Marking Drawer / Panel */}
-              <div className="lg:col-span-6 rounded-xl border border-gray-200 bg-white p-6 shadow-sm space-y-5">
+              <div className="lg:col-span-6 rounded-2xl border border-[#E6E2D6] bg-[#FFFFFF] p-6 shadow-xs space-y-5">
                 {!selectedSubmissionId ? (
-                  <div className="p-8 text-center text-sm text-gray-500">
+                  <div className="p-12 text-center text-xs text-[#7C766C]">
                     Select a student submission from the list to view their answer and grade.
                   </div>
                 ) : selectedSubmissionLoading ? (
                   <LoadingState message="Loading submission details…" />
                 ) : selectedSubmission ? (
                   <div className="space-y-5">
-                    <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+                    <div className="flex items-center justify-between border-b border-[#F0EDE4] pb-3">
                       <div>
-                        <h4 className="font-semibold text-gray-900">
+                        <h4 className="font-serif font-bold text-base text-[#1F1D1A]">
                           {selectedSubmission.studentName}
                         </h4>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-[#7C766C]">
                           Submitted: {formatDateTime(selectedSubmission.submittedAt)}
                         </p>
                       </div>
@@ -514,30 +511,30 @@ export default function TeacherAssignmentDetailPage() {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1">
+                      <label className="block text-xs font-semibold text-[#45413C] uppercase tracking-wider mb-1">
                         Answer Text
                       </label>
-                      <div className="rounded-lg bg-gray-50 p-3 text-sm text-gray-800 border border-gray-200 whitespace-pre-wrap max-h-60 overflow-y-auto font-mono">
+                      <div className="rounded-xl bg-[#FBF9F5] p-4 text-xs text-[#1F1D1A] border border-[#E6E2D6] whitespace-pre-wrap max-h-60 overflow-y-auto font-mono leading-relaxed">
                         {selectedSubmission.answerText}
                       </div>
                     </div>
 
                     {/* Grade Form */}
-                    <form onSubmit={handleGradeSubmit} className="space-y-4 pt-2 border-t border-gray-100">
-                      <h5 className="text-sm font-semibold text-gray-900">
+                    <form onSubmit={handleGradeSubmit} className="space-y-4 pt-2 border-t border-[#F0EDE4]">
+                      <h5 className="text-sm font-serif font-bold text-[#1F1D1A]">
                         {selectedSubmission.status === "Reviewed"
                           ? "Current Grade & Feedback"
                           : "Grade Submission"}
                       </h5>
 
                       {gradeError && (
-                        <div className="rounded-lg bg-red-50 p-3 text-xs text-red-700 font-medium">
+                        <div className="rounded-lg bg-[#FDF4F4] border border-[#F2C2C2] p-3 text-xs text-[#8C2A2A] font-medium">
                           {gradeError}
                         </div>
                       )}
 
                       <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                        <label className="block text-xs font-semibold text-[#45413C] uppercase tracking-wider mb-1">
                           Marks (Max: {selectedSubmission.maxMarks})
                         </label>
                         <input
@@ -546,21 +543,21 @@ export default function TeacherAssignmentDetailPage() {
                           onChange={(e) =>
                             setGradeMarks(e.target.value === "" ? "" : Number(e.target.value))
                           }
-                          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm font-mono focus:border-blue-500 focus:outline-none"
+                          className="w-full rounded-lg border border-[#E6E2D6] px-3.5 py-2 text-sm font-mono text-[#1F1D1A]"
                           placeholder={`0 to ${selectedSubmission.maxMarks}`}
                         />
                       </div>
 
                       <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">
+                        <label className="block text-xs font-semibold text-[#45413C] uppercase tracking-wider mb-1">
                           Feedback (Optional)
                         </label>
                         <textarea
                           rows={3}
                           value={gradeFeedback}
                           onChange={(e) => setGradeFeedback(e.target.value)}
-                          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
-                          placeholder="Provide constructive feedback for the student..."
+                          className="w-full rounded-lg border border-[#E6E2D6] p-3.5 text-sm text-[#1F1D1A]"
+                          placeholder="Provide constructive feedback..."
                         />
                       </div>
 
@@ -569,7 +566,7 @@ export default function TeacherAssignmentDetailPage() {
                           <button
                             type="button"
                             onClick={() => setShowReopenDialog(true)}
-                            className="rounded-lg border border-purple-300 bg-purple-50 px-3 py-1.5 text-xs font-semibold text-purple-700 hover:bg-purple-100"
+                            className="rounded-lg border border-[#E6D6EB] bg-[#F7F2F8] px-3 py-1.5 text-xs font-semibold text-[#5C2B66] hover:bg-[#EFE3F2]"
                           >
                             Reopen for Revision
                           </button>
@@ -577,10 +574,10 @@ export default function TeacherAssignmentDetailPage() {
                         <button
                           type="submit"
                           disabled={gradeMutation.isPending}
-                          className="ml-auto rounded-lg bg-blue-600 px-4 py-1.5 text-xs font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
+                          className="ml-auto rounded-lg bg-[#2D2926] hover:bg-[#1F1D1A] px-4 py-1.5 text-xs font-semibold text-[#FBF9F5] disabled:opacity-50 shadow-xs"
                         >
                           {gradeMutation.isPending
-                            ? "Saving Grade..."
+                            ? "Saving..."
                             : selectedSubmission.status === "Reviewed"
                             ? "Update Grade"
                             : "Record Grade"}

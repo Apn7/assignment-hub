@@ -7,26 +7,26 @@ interface StatusBadgeProps {
 }
 
 export function StatusBadge({ status }: StatusBadgeProps) {
-  let badgeStyles = "bg-gray-100 text-gray-800 border-gray-200";
+  let badgeStyles = "bg-[#F3EFE6] text-[#45413C] border-[#E2DDD0]";
 
   switch (status) {
     case "Draft":
-      badgeStyles = "bg-amber-50 text-amber-800 border-amber-200/80";
+      badgeStyles = "bg-[#FFF8EB] text-[#855B14] border-[#F2E3C6]";
       break;
     case "Published":
-      badgeStyles = "bg-emerald-50 text-emerald-800 border-emerald-200/80";
+      badgeStyles = "bg-[#F0F7F4] text-[#1E5641] border-[#D4E8DF]";
       break;
     case "Submitted":
-      badgeStyles = "bg-blue-50 text-blue-800 border-blue-200/80";
+      badgeStyles = "bg-[#F0F4F8] text-[#1D4A6E] border-[#D3E0EA]";
       break;
     case "Reviewed":
-      badgeStyles = "bg-purple-50 text-purple-800 border-purple-200/80";
+      badgeStyles = "bg-[#F7F2F8] text-[#5C2B66] border-[#E6D6EB]";
       break;
   }
 
   return (
     <span
-      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${badgeStyles}`}
+      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold tracking-wide ${badgeStyles}`}
     >
       {status}
     </span>

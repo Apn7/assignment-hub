@@ -112,16 +112,16 @@ export default function NewAssignmentPage() {
     <div className="max-w-2xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-gray-900">
+          <h2 className="text-3xl font-serif font-bold text-[#1F1D1A]">
             Create Assignment Draft
           </h2>
-          <p className="mt-1 text-sm text-gray-500">
-            Assignments start as drafts and must be published before students can view them.
+          <p className="mt-1 text-xs text-[#7C766C]">
+            Assignments start as drafts. Publishing makes work visible to your class.
           </p>
         </div>
         <Link
           href="/teacher"
-          className="text-sm font-semibold text-gray-600 hover:text-gray-900"
+          className="text-xs font-semibold text-[#8C7B6B] hover:text-[#1F1D1A]"
         >
           ← Back to Dashboard
         </Link>
@@ -129,35 +129,35 @@ export default function NewAssignmentPage() {
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm space-y-5"
+        className="rounded-2xl border border-[#E6E2D6] bg-[#FFFFFF] p-7 shadow-xs space-y-5"
       >
         {serverError && (
-          <div className="rounded-lg bg-red-50 p-4 text-sm text-red-700 font-medium">
+          <div className="rounded-lg bg-[#FDF4F4] border border-[#F2C2C2] p-4 text-xs text-[#8C2A2A] font-medium">
             {serverError}
           </div>
         )}
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Title
+          <label className="block text-xs font-semibold text-[#45413C] uppercase tracking-wider mb-1.5">
+            Assignment Title
           </label>
           <input
             {...register("title")}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
-            placeholder="e.g. Kinematics Worksheet 1"
+            className="w-full rounded-lg border border-[#E6E2D6] px-3.5 py-2 text-sm text-[#1F1D1A] placeholder:text-[#A59F93]"
+            placeholder="e.g. Kinematics Problem Set 1"
           />
           {errors.title && (
-            <p className="mt-1 text-xs text-red-600">{errors.title.message}</p>
+            <p className="mt-1 text-xs text-[#8C2A2A] font-medium">{errors.title.message}</p>
           )}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Class & Subject
+          <label className="block text-xs font-semibold text-[#45413C] uppercase tracking-wider mb-1.5">
+            Class & Subject Entitlement
           </label>
           <select
             {...register("pair")}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm bg-white focus:border-blue-500 focus:outline-none"
+            className="w-full rounded-lg border border-[#E6E2D6] px-3.5 py-2 text-sm text-[#1F1D1A] bg-white"
           >
             <option value="">-- Select Class & Subject --</option>
             {pairs?.map((p) => (
@@ -170,22 +170,22 @@ export default function NewAssignmentPage() {
             ))}
           </select>
           {errors.pair && (
-            <p className="mt-1 text-xs text-red-600">{errors.pair.message}</p>
+            <p className="mt-1 text-xs text-[#8C2A2A] font-medium">{errors.pair.message}</p>
           )}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Description
+          <label className="block text-xs font-semibold text-[#45413C] uppercase tracking-wider mb-1.5">
+            Description / Problems
           </label>
           <textarea
             {...register("description")}
             rows={4}
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
-            placeholder="Provide instructions or problem statements..."
+            className="w-full rounded-lg border border-[#E6E2D6] p-3.5 text-sm text-[#1F1D1A] placeholder:text-[#A59F93]"
+            placeholder="Provide task details or questions..."
           />
           {errors.description && (
-            <p className="mt-1 text-xs text-red-600">
+            <p className="mt-1 text-xs text-[#8C2A2A] font-medium">
               {errors.description.message}
             </p>
           )}
@@ -193,49 +193,49 @@ export default function NewAssignmentPage() {
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Deadline
+            <label className="block text-xs font-semibold text-[#45413C] uppercase tracking-wider mb-1.5">
+              Submission Deadline
             </label>
             <input
               type="datetime-local"
               {...register("deadlineLocal")}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none"
+              className="w-full rounded-lg border border-[#E6E2D6] px-3.5 py-2 text-sm text-[#1F1D1A]"
             />
             {errors.deadlineLocal && (
-              <p className="mt-1 text-xs text-red-600">
+              <p className="mt-1 text-xs text-[#8C2A2A] font-medium">
                 {errors.deadlineLocal.message}
               </p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Max Marks
+            <label className="block text-xs font-semibold text-[#45413C] uppercase tracking-wider mb-1.5">
+              Maximum Marks
             </label>
             <input
               type="number"
               {...register("maxMarks", { valueAsNumber: true })}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none font-mono"
+              className="w-full rounded-lg border border-[#E6E2D6] px-3.5 py-2 text-sm text-[#1F1D1A] font-mono"
             />
             {errors.maxMarks && (
-              <p className="mt-1 text-xs text-red-600">
+              <p className="mt-1 text-xs text-[#8C2A2A] font-medium">
                 {errors.maxMarks.message}
               </p>
             )}
           </div>
         </div>
 
-        <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+        <div className="flex justify-end gap-3 pt-4 border-t border-[#F0EDE4]">
           <Link
             href="/teacher"
-            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            className="rounded-lg border border-[#E6E2D6] bg-[#FBF9F5] px-4 py-2 text-xs font-semibold text-[#45413C] hover:bg-[#F3EFE6]"
           >
             Cancel
           </Link>
           <button
             type="submit"
             disabled={isSubmitting || createMutation.isPending}
-            className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
+            className="rounded-lg bg-[#2D2926] hover:bg-[#1F1D1A] px-5 py-2 text-xs font-semibold text-[#FBF9F5] disabled:opacity-50 shadow-xs"
           >
             {isSubmitting || createMutation.isPending
               ? "Creating..."
