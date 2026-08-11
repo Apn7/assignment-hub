@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 
 /**
  * Base URL of the ASP.NET Core API as seen from the browser.
@@ -9,20 +9,41 @@ import axios from 'axios';
  * clone runs without any configuration.
  */
 export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:5080';
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5080";
 
 /**
- * Shared axios instance. Every feature should import this rather than calling
- * axios directly, so that auth headers, error normalisation and timeouts are
- * configured in exactly one place.
+ * Shared axios instance with automatic bearer-token injection and global
+ * 401 handling. Every feature should import `api` rather than calling
+ * axios directly.
  */
-export const apiClient = axios.create({
+export const api = axios.create({
   baseURL: API_BASE_URL,
   timeout: 10_000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  headers: { "Content-Type": "application/json" },
 });
 
-// Request/response interceptors (bearer token injection, 401 handling) are
-// added here once authentication lands.
+// Inject the stored JWT on every outgoing request.
+api.interceptors.request.use((config) => {
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
+// On any 401, clear the session and redirect to login.
+api.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    if (err.response?.status === 401 && typeof window !== "undefined") {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      if (!window.location.pathname.startsWith("/login"))
+        window.location.href = "/login";
+    }
+    return Promise.reject(err);
+  }
+);
+
+// Keep the old name exported so health.ts (which imports `apiClient`) still
+// compiles without changes.
+export const apiClient = api;
