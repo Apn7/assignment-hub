@@ -1,9 +1,9 @@
 # Assignment Hub — Role-Based Assignment & Submission Management System
 
-[![Build & Test](https://img.shields.io/badge/Unit%20Tests-145%20Passed-brightgreen)](https://github.com/Apn7/assignnment-hub)
+[![Build & Test](https://img.shields.io/badge/Unit%20Tests-145%20Passed-brightgreen)](https://github.com/Apn7/assignment-hub)
 [![Backend](https://img.shields.io/badge/.NET-8.0%20Web%20API-512BD4)](https://dotnet.microsoft.com/)
 [![Frontend](https://img.shields.io/badge/Next.js-16%20App%20Router-000000)](https://nextjs.org/)
-[![Design](https://img.shields.io/badge/Design-Paper%20Theme-FBF9F5)](https://github.com/Apn7/assignnment-hub)
+[![Design](https://img.shields.io/badge/Design-Paper%20Theme-FBF9F5)](https://github.com/Apn7/assignment-hub)
 
 A role-based school/college Assignment & Submission Management System built for the **Assistant Software Engineer Recruitment Project** (OnnoRokom Projukti Limited).
 
@@ -11,7 +11,7 @@ A role-based school/college Assignment & Submission Management System built for 
 
 ## 📌 Submission Information
 
-- **Git Repository Link**: [https://github.com/Apn7/assignnment-hub.git](https://github.com/Apn7/assignnment-hub.git)
+- **Git Repository Link**: [https://github.com/Apn7/assignment-hub.git](https://github.com/Apn7/assignment-hub.git)
 - **Submission Form Link**: [https://q-rp.com/c/4CIs](https://q-rp.com/c/4CIs)
 
 ---
