@@ -1,149 +1,157 @@
 # Assignment Hub — Role-Based Assignment & Submission Management System
 
 [![Build & Test](https://img.shields.io/badge/Unit%20Tests-145%20Passed-brightgreen)](https://github.com/Apn7/assignnment-hub)
-[![Framework](https://img.shields.io/badge/.NET-8.0%20Web%20API-512BD4)](https://dotnet.microsoft.com/)
+[![Backend](https://img.shields.io/badge/.NET-8.0%20Web%20API-512BD4)](https://dotnet.microsoft.com/)
 [![Frontend](https://img.shields.io/badge/Next.js-16%20App%20Router-000000)](https://nextjs.org/)
 [![Design](https://img.shields.io/badge/Design-Paper%20Theme-FBF9F5)](https://github.com/Apn7/assignnment-hub)
 
-A role-based school/college Assignment & Submission Management System built with **ASP.NET Core 8 Web API** (Clean Architecture), **Next.js 16 App Router** (React 19 + Anthropic-inspired Paper Theme UI), and **PostgreSQL 16**.
+A role-based school/college Assignment & Submission Management System built for the **Assistant Software Engineer Recruitment Project** (OnnoRokom Projukti Limited).
 
 ---
 
-## 📌 Project Links & Demo Credentials
+## 📌 Submission Information
 
-- **GitHub Repository**: [https://github.com/Apn7/assignnment-hub.git](https://github.com/Apn7/assignnment-hub.git)
-- **Local Application URL**: `http://localhost:3000`
-- **API Swagger Documentation**: `http://localhost:5080/swagger`
-- **API Health Check**: `http://localhost:5080/api/health`
+- **Git Repository Link**: [https://github.com/Apn7/assignnment-hub.git](https://github.com/Apn7/assignnment-hub.git)
+- **Submission Form Link**: [https://q-rp.com/c/4CIs](https://q-rp.com/c/4CIs)
 
-### Working Demo Credentials
+---
 
-| Role | Email | Password | Landing Portal & Capabilities |
+## 🔑 Demo Credentials
+
+Working credentials for all three roles (seeded automatically on database startup):
+
+| Role | Email | Password | Assigned Scope / Landing |
 | :--- | :--- | :--- | :--- |
-| **Admin** | `admin@assignmenthub.local` | `Admin#1234` | `/admin` — System management (Users, Classes, Subjects, Teacher Entitlements, Audit Tables) |
-| **Teacher 1** | `teacher1@assignmenthub.local` | `Teacher#1234` | `/teacher` — Teaches Class 9 – A (Physics) |
-| **Teacher 2** | `teacher2@assignmenthub.local` | `Teacher#1234` | `/teacher` — Teaches Class 10 – A (Higher Mathematics) |
-| **Student 1** | `student1@assignmenthub.local` | `Student#1234` | `/student` — Student in Class 9 – A |
-| **Student 2** | `student2@assignmenthub.local` | `Student#1234` | `/student` — Student in Class 9 – A |
-| **Student 3** | `student3@assignmenthub.local` | `Student#1234` | `/student` — Student in Class 10 – A |
-| **Student 4** | `student4@assignmenthub.local` | `Student#1234` | `/student` — Student in Class 10 – A |
+| **Admin** | `admin@assignmenthub.local` | `Admin#1234` | System portal (`/admin`) — Manage Users, Classes, Subjects, Teacher Entitlements, Audit Tables |
+| **Teacher** | `teacher1@assignmenthub.local` | `Teacher#1234` | Teacher portal (`/teacher`) — Teaches Class 9 – A (Physics) |
+| **Student** | `student1@assignmenthub.local` | `Student#1234` | Student portal (`/student`) — Enrolled in Class 9 – A |
+
+*Additional Seed Accounts*:
+- **Teacher 2**: `teacher2@assignmenthub.local` / `Teacher#1234` (Class 10 – A, Higher Mathematics)
+- **Student 2-4**: `student2@assignmenthub.local` to `student4@assignmenthub.local` / `Student#1234`
 
 ---
 
-## ✨ Features
+## 📖 1. Project Overview
 
-### 👑 Admin Portal (`/admin`)
-- **User Management**: Create Admin, Teacher, and Student accounts (`POST /api/admin/users`). Enforces role rules (Students require a Class; Teachers/Admins must not have one). Email lowercasing on create closes case-sensitivity gaps.
-- **Class & Subject Management**: Create Classes (`POST /api/admin/classrooms`) and Subjects (`POST /api/admin/subjects`) with case-insensitive duplicate prevention.
-- **Teacher Assignments**: Entitle teachers to teach specific class/subject pairs (`POST /api/admin/teacher-assignments`) with duplicate triple index protection.
-- **System Audit View**: System-wide overview of all assignments and student submissions across all classes and subjects with status filtering.
+**Assignment Hub** is a role-based web application that streamlines assignment management between teachers, students, and administrators. 
 
-### 👩‍🏫 Teacher Portal (`/teacher`)
-- **Entitlement-Scoped Assignments**: Teachers select only from their assigned teaching pairs (`GET /api/teacher-assignments/mine`).
-- **Assignment Lifecycle**: Create, Edit, Publish (`Draft` vs `Published`), and Delete assignments. Set Title, Description, UTC Deadline, and Max Marks.
-- **Submission Review & Grading**: View student submissions for published assignments, award marks (`0 <= marks <= maxMarks`), and provide detailed feedback.
-- **Status Workflow**: Ability to reopen reviewed submissions back to `Submitted` for revision.
+- **Teachers** create assignments for specific class/subject pairs, set deadlines and maximum marks, publish drafts, view student submissions, award marks, provide feedback, and reopen submissions for revision when necessary.
+- **Students** view published assignments for their enrolled class, submit answers before the UTC deadline, edit submissions prior to deadline expiration, and view teacher feedback & marks.
+- **Admins** manage users (Admin, Teacher, Student), create classes and subjects, assign teachers to class/subject pairs, and audit all system assignments & submissions.
 
-### 🎓 Student Portal (`/student`)
-- **Class-Scoped Feed**: View published assignments for the student's assigned class ordered by nearest deadline.
-- **Submission Workflow**: Submit answer text before the deadline (`POST /api/assignments/{id}/submissions`).
-- **Revision Before Deadline**: Update existing submission prior to the deadline (`PUT /api/assignments/{id}/submissions/mine`).
-- **Grade & Feedback View**: Read-only submission status, score ratio, and teacher feedback.
+---
+
+## ✨ 2. Main Features
+
+### Admin Management (`/admin`)
+- **User Creation**: Create Admin, Teacher, and Student accounts (`POST /api/admin/users`). Enforces role rules (Student requires Class; Teacher/Admin forbids Class). Email lowercasing on create closes case-sensitivity gaps.
+- **Class & Subject Management**: Create Classes (`POST /api/admin/classrooms`) and Subjects (`POST /api/admin/subjects`) with case-insensitive duplicate prevention (409).
+- **Teacher Entitlements**: Assign teachers to class/subject pairs (`POST /api/admin/teacher-assignments`) with duplicate triple index protection (409).
+- **System Audit View**: Overview of all assignments and submissions across all classes and subjects with status filtering.
+
+### Teacher Management (`/teacher`)
+- **Entitlement-Scoped Work**: Teachers select only from their assigned teaching pairs (`GET /api/teacher-assignments/mine`).
+- **Assignment Lifecycle**: Create, edit, publish (`Draft` vs `Published`), and delete assignments.
+- **Submissions & Grading**: Review student submissions, grade (`0 <= marks <= maxMarks`), and provide text feedback. Reopen reviewed submissions back to `Submitted` for student revision.
+
+### Student Management (`/student`)
+- **Class-Scoped Feed**: View published assignments for the student's enrolled class ordered by nearest deadline.
+- **Submission Workflow**: Submit answer text before the UTC deadline (`POST /api/assignments/{id}/submissions`).
+- **Revision Before Deadline**: Edit existing submission prior to deadline expiration (`PUT /api/assignments/{id}/submissions/mine`).
+- **Grade & Feedback View**: Read-only submission status badge, score ratio (`marks / maxMarks`), and teacher feedback box.
 
 ---
 
 ## 🎨 Design System: Anthropic Paper Theme
 
-The frontend is styled using an **Anthropic-inspired Paper Theme**:
-- **Typography**: Google Fonts **Lora** (elegant serif headings) paired with **Plus Jakarta Sans** (clean sans-serif body).
-- **Color Palette**:
-  - Warm Paper Canvas: `#FBF9F5`
-  - Elevated Card Surfaces: `#FFFFFF` with soft `#E6E2D6` borders
-  - Primary Ink: `#1F1D1A`
-  - Secondary Text: `#45413C` & `#7C766C`
-- **UI Components**: Custom paper status pills (`Draft`, `Published`, `Submitted`, `Reviewed`), backdrop blur modals, drawer panels, and clean empty/loading/error states.
+Styled with an **Anthropic-inspired Paper Theme**:
+- **Typography**: Google Fonts **Lora** (headings) + **Plus Jakarta Sans** (body).
+- **Color Tokens**: Warm paper canvas `#FBF9F5`, white cards `#FFFFFF` with `#E6E2D6` borders, deep ink `#1F1D1A` text.
+- **UI Components**: Paper status badges (`Draft`, `Published`, `Submitted`, `Reviewed`), backdrop blur modals, drawers, and responsive layouts.
 
 ---
 
-## 🛠️ Technology Stack
+## 🛠️ 3. Technology Stack
 
 | Layer | Technology Choice |
 | :--- | :--- |
-| **Frontend Framework** | Next.js 16 (App Router), React 19, TypeScript |
-| **Styling** | Vanilla CSS / Tailwind CSS with Paper Tokens, Lora & Plus Jakarta Sans fonts |
-| **State & Data Fetching** | TanStack Query (@tanstack/react-query), Axios with JWT interceptors |
-| **Forms & Validation** | React Hook Form + Zod (`@hookform/resolvers`) |
-| **Backend Framework** | ASP.NET Core 8 Web API, C#, Clean Architecture |
-| **Application Logic** | `Result<T>` pattern, FluentValidation, Serilog logging |
+| **Frontend** | Next.js 16 (App Router), React 19, TypeScript |
+| **Styling** | Vanilla CSS & Tailwind CSS (Paper Tokens), Lora & Plus Jakarta Sans fonts |
+| **Forms & State** | React Hook Form + Zod (`@hookform/resolvers`), TanStack Query, Axios |
+| **Backend** | ASP.NET Core 8 Web API, C#, Clean Architecture |
+| **Logic & Validation** | `Result<T>` pattern, FluentValidation, Serilog logging, Swagger/OpenAPI |
 | **Database** | PostgreSQL 16 via Entity Framework Core 9 (Npgsql), UTC Converters |
-| **Authentication** | JWT Bearer Tokens, PBKDF2 `IPasswordHasher`, Role Guards (`RequireRole`) |
-| **Testing** | xUnit, Moq, FluentAssertions, EF Core In-Memory Provider (**145 Passing Tests**) |
+| **Auth & Security** | JWT Bearer Tokens, PBKDF2 `IPasswordHasher`, Role Guards (`RequireRole`) |
+| **Testing** | xUnit, Moq, FluentAssertions (**145 Passing Unit Tests**) |
 
 ---
 
-## 📂 Project Structure
+## 📂 4. Project Structure
 
 ```
 assignment-hub/
 ├── backend/
 │   ├── AssignmentHub.sln
 │   ├── src/
-│   │   ├── AssignmentHub.Api/            # Thin Controllers, JWT setup, Middleware
+│   │   ├── AssignmentHub.Api/            # Controllers, Swagger, JWT Auth, Middleware
 │   │   ├── AssignmentHub.Application/    # Services, DTOs, FluentValidation, Result<T>
-│   │   ├── AssignmentHub.Domain/         # Domain Entities (User, ClassRoom, Subject, etc.)
-│   │   └── AssignmentHub.Infrastructure/ # EF Core DbContext, Repositories, PasswordHasher
+│   │   ├── AssignmentHub.Domain/         # Domain Entities & Enums
+│   │   └── AssignmentHub.Infrastructure/ # EF Core DbContext, Repositories, Migrations
 │   └── tests/
 │       └── AssignmentHub.Tests/          # 145 Unit tests (xUnit + Moq + FluentAssertions)
 ├── frontend/                             # Next.js App Router application
 │   └── src/
-│       ├── app/                          # Role layouts (/admin, /teacher, /student, /login)
+│       ├── app/                          # Role portals (/admin, /teacher, /student, /login)
 │       ├── components/                   # Paper UI primitives (StatusBadge, ConfirmDialog)
-│       ├── lib/api/                      # Axios client, JWT interceptors, error helpers
+│       ├── lib/api/                      # Axios client with JWT interceptors
 │       ├── lib/auth/                     # Auth storage & token decoding helpers
-│       └── types/                        # TypeScript DTO interfaces
-├── docs/                                 # Architectural docs & requirement specifications
-├── docker-compose.yml                    # PostgreSQL 16 container setup
+│       └── types/                        # TypeScript DTO contracts
+├── docs/                                 # Documentation reference specs
+├── docker-compose.yml                    # PostgreSQL 16 service configuration
+├── .env.example                          # Root environment template
 └── README.md
 ```
 
 ---
 
-## 🚀 Quick Start Guide
+## 🚀 5. Setup Instructions (Easy Local Setup)
 
 ### Prerequisites
 - [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 - [Node.js 20.9+](https://nodejs.org) and `npm`
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (for PostgreSQL)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (for PostgreSQL 16)
 
 ---
 
-### 1. Database Setup
+### Database Setup Instructions
 
-Start the PostgreSQL database container:
+1. Start the PostgreSQL 16 container:
 
-```bash
-docker compose up -d db
-```
+   ```bash
+   docker compose up -d db
+   ```
 
-The database seeds automatically on startup when the backend initializes (`DataSeeder`).
+2. Database table schemas and initial demo data seed automatically on backend startup via EF Core migrations and `DataSeeder`. No manual database table creation is needed.
 
 ---
 
-### 2. Backend API Setup
+### Instructions for Running the Backend
 
-Run the backend server:
+From the repository root:
 
 ```bash
 cd backend
 dotnet run --project src/AssignmentHub.Api/AssignmentHub.Api.csproj
 ```
 
-- **Swagger UI**: [http://localhost:5080/swagger](http://localhost:5080/swagger)
-- **Health Check**: [http://localhost:5080/api/health](http://localhost:5080/api/health)
+- **Backend API Base URL**: `http://localhost:5080`
+- **Swagger API Documentation**: `http://localhost:5080/swagger`
+- **API Health Check**: `http://localhost:5080/api/health`
 
 ---
 
-### 3. Frontend Web Application Setup
+### Instructions for Running the Frontend
 
 In a new terminal window:
 
@@ -157,34 +165,39 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 🧪 Running Automated Tests
+### Instructions for Running the Tests
 
-Run the complete unit test suite across application services, repositories, authorization rules, and validation logic:
+To execute the complete unit test suite across business rules, authorization, and submission workflows:
 
 ```bash
 cd backend
 dotnet test --verbosity normal
 ```
 
-**Test Execution Summary**:
-- **Total Tests**: 145
-- **Passed**: 145
-- **Failed**: 0
-- **Time**: ~7 seconds
+**Test Output**: **145 Passed**, 0 Failed, 0 Skipped (~7s execution time).
 
 ---
 
-## 🔒 Security & Architecture Principles
+## ⚙️ 6. Environment Configuration
 
-1. **Backend Security, Frontend UX**: Frontend role guards (`RequireRole`) provide clean UX by hiding unauthorized actions; the ASP.NET Core API strictly validates tokens, roles, and entity ownership on every request.
-2. **Explicit Result Pattern**: Application services return `Result<T>` data objects instead of throwing exceptions. `ApiControllerBase` centrally maps status kinds (`ResultStatus.Forbidden` -> `403`, `ResultStatus.NotFound` -> `404`, `ResultStatus.Unprocessable` -> `422`, `ResultStatus.Conflict` -> `409`).
-3. **2-Layer Conflict Discipline**: Duplicate checks use an Application pre-check for clean error messages AND a database-level `23505` `PostgresException` catch block in repositories for race condition protection.
+Sensitive credentials are excluded from source control. Environment variables are loaded via `.env.example` templates:
+
+- Root template: `.env.example` (`POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`)
+- Frontend template: `frontend/.env.local.example` (`NEXT_PUBLIC_API_URL=http://localhost:5080`)
 
 ---
 
-## 📝 Documented Assumptions & Descope Decisions
+## 📋 7. Assumptions
 
-- **Admin Management Descope**: Admin CRUD endpoints support **CREATE and LIST** operations. Update and Delete operations for users, classes, subjects, and teacher entitlements are intentionally descoped.
-- **Deadline Strictness**: Students cannot submit or edit answers after `deadline` UTC timestamp.
-- **Single Submission per Student**: Each student has exactly one submission per assignment, editable prior to deadline.
-- **Case-Insensitive Email Normalization**: User emails are normalized to lowercase on creation, closing potential case-sensitivity login conflicts.
+1. **Deadline Enforcement**: All deadlines are stored and validated in UTC (`DateTime.UtcNow`). Students cannot submit or edit after the deadline.
+2. **Single Submission per Student**: Each student has exactly one submission per assignment, which remains editable until the deadline.
+3. **Teaching Pair Scoping**: Teachers may only create assignments for class/subject pairs assigned to them in `TeacherAssignments`.
+4. **Email Normalization**: Login and user creation normalize emails to lower-case.
+
+---
+
+## 🚧 8. Known Limitations
+
+1. **Admin Management Scope**: Admin CRUD endpoints support **CREATE and LIST** operations. Update and Delete operations for users, classes, subjects, and entitlements are intentionally descoped.
+2. **No Refresh Tokens**: Relies on stateless 60-minute JWT access tokens.
+3. **No File Uploads**: Submissions accept structured answer text formatted in markdown/text as per the initial requirements.
