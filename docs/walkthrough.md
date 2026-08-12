@@ -33,8 +33,7 @@ student sees "Reviewed — 8/10 — good work, check Q4"
 student revises, teacher re-marks
 ```
 
-That loop is **built and working today**. What is not built yet is the frontend and
-the admin's user/class management screens (see §11).
+That loop is **built, fully tested, paper-themed, and working end to end**. Both the Next.js App Router frontend and the ASP.NET Core backend are feature-complete, including Admin user, class, subject, and entitlement management screens.
 
 ---
 
@@ -47,10 +46,10 @@ the admin's user/class management screens (see §11).
 | **Entity Framework Core** | An ORM: lets us write C# instead of SQL | Standard for .NET. Also gives us *migrations* (see §5) |
 | **Docker Compose** | Runs Postgres in a container | So you do not have to install Postgres on your machine |
 | **JWT** | A signed token that proves who you are | Required by the brief |
-| **xUnit + Moq + FluentAssertions** | Test framework, fake objects, readable assertions | The standard trio in .NET |
+| **xUnit + Moq + FluentAssertions** | Test framework, fake objects, readable assertions | The standard trio in .NET (**145 passed tests**) |
 | **FluentValidation** | Checks incoming request shapes | Cleaner than scattering `if (x == null)` everywhere |
 | **Swagger** | Auto-generated API docs you can click | Required by the brief, and it is how we test by hand |
-| **Next.js + TypeScript** | The frontend | Required by the brief. Scaffolded, not built yet |
+| **Next.js 16 + TypeScript** | The frontend | App Router, React 19, Paper Theme (Lora & Plus Jakarta Sans fonts) |
 
 **ORM in one line:** instead of writing `SELECT * FROM "Assignments" WHERE ...`, you
 write `_context.Assignments.Where(a => a.Status == Published)` and EF Core turns
@@ -60,18 +59,19 @@ that into SQL for you.
 
 ## 2b. How the work was sequenced
 
-48 commits in seven deliberate stages. Nothing was built before the thing it depends
+Built in deliberate, ordered stages. Nothing was built before the thing it depends
 on, which is why every commit compiles.
 
 | Stage | What landed | Commits |
 | --- | --- | --- |
-| 1 | Scaffold only — projects, Docker, config, error contract, Swagger, CORS, logging, health endpoint, test harness, Next.js shell. **No business logic.** | 13 |
+| 1 | Scaffold only — projects, Docker, config, error contract, Swagger, CORS, logging, health endpoint, test harness, Next.js shell. | 13 |
 | 2 | Extracted the PDF brief into `docs/requirement.md` so there is a source of truth in the repo | 1 |
 | 3 | Six entities, EF Core mappings, `InitialSchema` migration, seeder, `docs/database.md` | 6 |
-| 4 | Authentication and role authorization only — login, `/me`, JWT, password hashing | 8 |
+| 4 | Authentication and role authorization — login, `/me`, JWT, password hashing | 8 |
 | 5 | Assignments — teacher CRUD + publish, student read, admin read | 10 |
 | 6 | Submissions — submit, revise, grade, reopen, admin view | 10 |
-| — | This walkthrough | 1 |
+| 7 | Frontend Foundation & Role Portals — JWT interceptors, Paper Theme UI (Lora + Plus Jakarta Sans fonts), Teacher/Student/Admin paper portals | 5 |
+| 8 | Admin Management & Entitlements — Teacher entitlement endpoint, Admin CRUD (Users, Classes, Subjects, Teacher Assignments), 145 unit tests passed | 4 |
 
 Two habits visible in `git log` that are worth pointing at:
 
