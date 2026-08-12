@@ -188,7 +188,7 @@ In a new terminal window:
 
    Open [http://localhost:3000](http://localhost:3000) in your browser. On Windows PowerShell, use `Copy-Item .env.local.example .env.local` instead of `cp`.
 
-   > 🌐 **Network Requirement Note**: Next.js uses `next/font/google` (`Lora` and `Plus_Jakarta_Sans`) in `src/app/layout.tsx`. Internet access is required during the initial `npm run dev` or `npm run build` step so Next.js can download font files, which are then cached locally in `.next/cache`.
+   > 🎨 **Self-Hosted Offline Fonts**: Typography fonts (`Lora` and `Plus_Jakarta_Sans`) are 100% self-hosted locally in `frontend/public/fonts/` using `next/font/local`. No external internet access to Google Fonts is required during build or runtime, allowing completely offline/air-gapped builds.
 
 ---
 
