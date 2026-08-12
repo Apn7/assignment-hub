@@ -67,8 +67,7 @@ review submissions and provide marks and feedback.
 
 ## 3. Technical Requirements
 
-Use the following technologies, or equivalent technologies suitable for the
-project:
+Use the following technologies for the project:
 
 | Layer | Requirement |
 | --- | --- |

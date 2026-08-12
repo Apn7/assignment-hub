@@ -1,6 +1,6 @@
 # Assignment Hub — Role-Based Assignment & Submission Management System
 
-[![Build & Test](https://img.shields.io/badge/Unit%20Tests-145%20Passed-brightgreen)](https://github.com/Apn7/assignment-hub)
+[![Build & Test](https://img.shields.io/badge/Tests-254%20Passed-brightgreen)](https://github.com/Apn7/assignment-hub)
 [![Backend](https://img.shields.io/badge/.NET-8.0%20Web%20API-512BD4)](https://dotnet.microsoft.com/)
 [![Frontend](https://img.shields.io/badge/Next.js-16%20App%20Router-000000)](https://nextjs.org/)
 [![Design](https://img.shields.io/badge/Design-Paper%20Theme-FBF9F5)](https://github.com/Apn7/assignment-hub)
@@ -68,7 +68,7 @@ The seeded subjects are **Physics**, **Mathematics**, and **English**.
 ## 🎨 Design System: Paper Theme
 
 Styled with a **Paper Theme**:
-- **Typography**: Google Fonts **Lora** (headings) + **Plus Jakarta Sans** (body).
+- **Typography**: Self-hosted **Lora** (headings) + **Plus Jakarta Sans** (body), loaded via `next/font/local`.
 - **Color Tokens**: Warm paper canvas `#FBF9F5`, white cards `#FFFFFF` with `#E6E2D6` borders, deep ink `#1F1D1A` text.
 - **UI Components**: Paper status badges (`Draft`, `Published`, `Submitted`, `Reviewed`), backdrop blur modals, drawers, and responsive layouts.
 
@@ -83,9 +83,9 @@ Styled with a **Paper Theme**:
 | **Forms & State** | React Hook Form + Zod (`@hookform/resolvers`), TanStack Query, Axios |
 | **Backend** | ASP.NET Core 8 Web API, C#, Clean Architecture |
 | **Logic & Validation** | `Result<T>` pattern, FluentValidation, ASP.NET Core logging (console + debug providers), Swagger/OpenAPI |
-| **Database** | PostgreSQL 16 via Entity Framework Core 9 (Npgsql), UTC Converters |
+| **Database** | PostgreSQL 16 via Entity Framework Core 8 (Npgsql 8.0.11), UTC Converters |
 | **Auth & Security** | JWT Bearer Tokens, PBKDF2 `IPasswordHasher`, Role Guards (`RequireRole`) |
-| **Testing** | xUnit, Moq, FluentAssertions (**145 Passing Unit Tests**) |
+| **Testing** | xUnit, Moq, FluentAssertions, `WebApplicationFactory` (**254 Passing Tests**) |
 
 ---
 
@@ -101,7 +101,10 @@ assignment-hub/
 │   │   ├── AssignmentHub.Domain/         # Domain Entities & Enums
 │   │   └── AssignmentHub.Infrastructure/ # EF Core DbContext, Repositories, Migrations
 │   └── tests/
-│       └── AssignmentHub.Tests/          # 145 Unit tests (xUnit + Moq + FluentAssertions)
+│       └── AssignmentHub.Tests/          # 254 tests
+│           ├── Unit/                     # Business rules & authorization (services)
+│           ├── Persistence/              # Repository query composition (EF InMemory)
+│           └── Integration/              # Full HTTP pipeline via WebApplicationFactory
 ├── frontend/                             # Next.js App Router application
 │   └── src/
 │       ├── app/                          # Role portals (/admin, /teacher, /student, /login)
@@ -194,14 +197,38 @@ In a new terminal window:
 
 ### Instructions for Running the Tests
 
-To execute the complete unit test suite across business rules, authorization, and submission workflows:
+To execute the complete test suite across business rules, authorization, and submission workflows:
 
 ```bash
 cd backend
 dotnet test --verbosity normal
 ```
 
-**Test Output**: **145 Passed**, 0 Failed, 0 Skipped (~7s execution time).
+**Test Output**: **254 Passed**, 0 Failed, 0 Skipped (~4s execution time).
+
+> ⚠️ **If the backend is already running**, add `--no-build`. A live `dotnet run` holds a
+> lock on the compiled DLLs, and the build step fails with `MSB3027` before any test
+> executes — which reads like a broken suite but is only a file lock:
+>
+> ```bash
+> dotnet test backend/AssignmentHub.sln --no-build
+> ```
+
+The suite has three layers, and no test requires a database or a running server:
+
+| Layer | Location | What it covers |
+| :--- | :--- | :--- |
+| **Unit** | `tests/.../Unit/` | Business rules and authorization decisions, against fake repositories with an injected clock |
+| **Persistence** | `tests/.../Persistence/` | That repository queries really compose the filters, ordering and `Include`s the services rely on (EF Core in-memory provider) |
+| **Integration** | `tests/.../Integration/` | The real HTTP pipeline hosted via `WebApplicationFactory<Program>` — routing, JWT validation, role gates and the `Result`-to-status mapping |
+
+The integration layer is what evidences the checklist item *"role-based access is enforced
+by the backend API"*. `RoleAuthorizationTests` walks the **entire authenticated endpoint
+surface** as a matrix, asserting that each route rejects anonymous callers (`401`) and every
+role it does not serve (`403`); `ResourceScopingTests` then covers the checks that run *after*
+the role gate passes — a teacher may not read or grade a colleague's submission, a student
+may not see a draft or another class's work — and pins the deliberate `404`-over-`403`
+choice that keeps the API from becoming an existence oracle.
 
 ---
 
