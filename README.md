@@ -1,5 +1,6 @@
 # Assignment Hub — Role-Based Assignment & Submission Management System
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Azure%20Container%20Apps-0078D4)](https://assignment-hub-web.calmocean-62fbcd3d.centralindia.azurecontainerapps.io)
 [![Build & Test](https://img.shields.io/badge/Tests-254%20Passed-brightgreen)](https://github.com/Apn7/assignment-hub)
 [![Backend](https://img.shields.io/badge/.NET-8.0%20Web%20API-512BD4)](https://dotnet.microsoft.com/)
 [![Frontend](https://img.shields.io/badge/Next.js-16%20App%20Router-000000)](https://nextjs.org/)
@@ -13,6 +14,33 @@ A role-based school/college Assignment & Submission Management System built for 
 
 - **Git Repository Link**: [https://github.com/Apn7/assignment-hub.git](https://github.com/Apn7/assignment-hub.git)
 - **Submission Form Link**: [https://q-rp.com/c/4CIs](https://q-rp.com/c/4CIs)
+
+---
+
+## 🌐 Live Demo
+
+The application is deployed and can be evaluated without any local setup:
+
+| | Link |
+| :--- | :--- |
+| **Live Application** | [assignment-hub-web.centralindia.azurecontainerapps.io](https://assignment-hub-web.calmocean-62fbcd3d.centralindia.azurecontainerapps.io) |
+| **API — Swagger / OpenAPI** | [assignment-hub-api.centralindia.azurecontainerapps.io/swagger](https://assignment-hub-api.calmocean-62fbcd3d.centralindia.azurecontainerapps.io/swagger) |
+| **API Health Check** | [assignment-hub-api.centralindia.azurecontainerapps.io/api/health](https://assignment-hub-api.calmocean-62fbcd3d.centralindia.azurecontainerapps.io/api/health) |
+
+Sign in with any account from the [Demo Credentials](#-demo-credentials) table below — the
+live database is seeded with the same data.
+
+**Deployment architecture**
+
+| Layer | Service |
+| :--- | :--- |
+| Frontend & API | Azure Container Apps (Central India), one container each, images built from the committed `Dockerfile`s |
+| Database | Azure Database for PostgreSQL Flexible Server 16 — same major version as local `docker-compose` |
+| Registry | Azure Container Registry, images tagged by git commit SHA |
+| Configuration | Container App secrets for the JWT signing key and connection string; no secret is committed |
+
+Migrations are applied explicitly before deployment rather than on startup, matching the
+local workflow documented in [docs/database.md](docs/database.md).
 
 ---
 
