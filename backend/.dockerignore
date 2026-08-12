@@ -1,0 +1,16 @@
+# Local build output — always stale relative to the image, and large.
+**/bin/
+**/obj/
+**/publish/
+
+# Test project: not part of the runtime image, and excluding it keeps the context small.
+tests/
+
+**/.vs/
+**/.vscode/
+**/*.user
+**/.DS_Store
+
+# Never let a local secret store into the build context.
+**/appsettings.*.local.json
+**/secrets.json
