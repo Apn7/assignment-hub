@@ -290,6 +290,8 @@ The frontend template `frontend/.env.local.example` contains only `NEXT_PUBLIC_A
 1. **Admin Management Scope**: Admin endpoints intentionally support **CREATE and LIST** only. Update/Delete were consciously descoped: with `DeleteBehavior.Restrict` protecting historical data, deleting in-use entities would be rejected by design, and safe removal requires soft-delete/deactivation — a planned next iteration rather than a half-safe destructive operation shipped under deadline. All entities can be created via the UI/API, so the full admin workflow is exercisable end-to-end.
 2. **No Refresh Tokens**: Relies on stateless 60-minute JWT access tokens.
 3. **No File Uploads**: Submissions accept structured answer text formatted in markdown/text as per the initial requirements.
+4. **Student dashboard issues one request per assignment**: The class feed endpoint returns assignment data only, so the dashboard fetches each assignment's own submission separately to show its status badge. A `404` on that call is the API's documented answer for "you have not submitted to this one", so those appear in the browser network tab by design rather than indicating a fault. Folding the student's submission status into the list response is the tidier fix and is deliberately deferred rather than changing a tested API contract late.
+5. **The live demo runs with the `Development` environment name**: This is what enables Swagger and the idempotent demo seeder on the hosted instance, and it is the reason the evaluator can log in without any setup. The trade-off is that the error handler includes exception detail in responses, which would not be acceptable for real production traffic; the deployed database holds only seeded demo data.
 
 ---
 
