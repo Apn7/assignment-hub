@@ -273,7 +273,9 @@ export default function TeacherAssignmentDetailPage() {
   const isPublished = assignment.status === "Published";
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8">
+    // flex + gap rather than space-y so the `order` utilities below reorder the
+    // sections without leaving the margin belonging to the old DOM position.
+    <div className="max-w-5xl mx-auto flex flex-col gap-8">
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#E6E2D6] pb-4">
         <div>
@@ -286,6 +288,22 @@ export default function TeacherAssignmentDetailPage() {
           <p className="mt-1 text-xs text-[#7C766C]">
             {assignment.classRoomName} • {assignment.subjectName}
           </p>
+          {/* States up front that grading lives on this page, so it is not something
+              the reader has to scroll to discover. Costs no extra request — the
+              submissions query is already running for the section below. */}
+          {isPublished && !submissionsLoading && (
+            <a
+              href="#submissions"
+              className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-[#E6E2D6] bg-[#FFFFFF] px-3 py-1 text-xs font-semibold text-[#1E5641] hover:bg-[#F0F7F4]"
+            >
+              {submissions && submissions.length > 0
+                ? `${submissions.length} submission${
+                    submissions.length === 1 ? "" : "s"
+                  } to review`
+                : "No submissions yet"}
+              <span aria-hidden="true">↓</span>
+            </a>
+          )}
         </div>
         <Link
           href="/teacher"
@@ -306,8 +324,16 @@ export default function TeacherAssignmentDetailPage() {
         </div>
       )}
 
-      {/* Assignment Edit Form */}
-      <div className="rounded-2xl border border-[#E6E2D6] bg-[#FFFFFF] p-7 shadow-xs space-y-6">
+      {/* Assignment Edit Form.
+          Ordered *after* the submissions list once published: at that point class,
+          subject and max marks are frozen and the deadline can only be extended, so
+          grading is the real work on this page. While it is still a draft there are no
+          submissions to show and editing is the primary action, so it stays first. */}
+      <div
+        className={`rounded-2xl border border-[#E6E2D6] bg-[#FFFFFF] p-7 shadow-xs space-y-6 ${
+          isPublished ? "order-2" : ""
+        }`}
+      >
         <div className="flex items-center justify-between border-b border-[#F0EDE4] pb-3">
           <h3 className="text-base font-serif font-bold text-[#1F1D1A]">
             Assignment Properties
@@ -436,9 +462,11 @@ export default function TeacherAssignmentDetailPage() {
         </form>
       </div>
 
-      {/* Submissions Section (Published Only) */}
+      {/* Submissions Section (Published Only).
+          order-1 puts this above the properties form. The old `pt-4 border-t` is gone
+          with it — it read as a divider *below* the form, which is the wrong side now. */}
       {isPublished && (
-        <div className="space-y-6 pt-4 border-t border-[#E6E2D6]">
+        <div id="submissions" className="order-1 space-y-6">
           <div className="flex items-center justify-between">
             <h3 className="text-2xl font-serif font-bold text-[#1F1D1A]">
               Student Submissions

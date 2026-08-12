@@ -108,7 +108,12 @@ export default function TeacherDashboardPage() {
                       href={`/teacher/assignments/${assignment.id}`}
                       className="text-xs font-semibold text-[#8C7B6B] hover:text-[#1F1D1A] hover:underline"
                     >
-                      View / Edit →
+                      {/* Names the actual destination. "View / Edit" hid the fact that
+                          grading happens through here, which is the whole point of the
+                          screen once an assignment is published. */}
+                      {assignment.status === "Published"
+                        ? "Review Submissions →"
+                        : "Edit Draft →"}
                     </Link>
                   </td>
                 </tr>
