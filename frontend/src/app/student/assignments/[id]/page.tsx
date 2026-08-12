@@ -44,7 +44,6 @@ export default function StudentAssignmentDetailPage() {
   const {
     data: submission,
     isLoading: submissionLoading,
-    error: submissionError,
     refetch: refetchSubmission,
   } = useQuery<SubmissionResponse | null>({
     queryKey: ["student", "submission", assignmentId],
@@ -65,7 +64,7 @@ export default function StudentAssignmentDetailPage() {
 
   useEffect(() => {
     if (submission) {
-      setAnswerText(submission.answerText);
+      queueMicrotask(() => setAnswerText(submission.answerText));
     }
   }, [submission]);
 
@@ -236,7 +235,7 @@ export default function StudentAssignmentDetailPage() {
                 Teacher Feedback
               </label>
               <p className="text-sm text-[#5C2B66] bg-white p-4 rounded-xl border border-[#E6D6EB] italic leading-relaxed">
-                "{submission.feedback}"
+                &ldquo;{submission.feedback}&rdquo;
               </p>
             </div>
           )}

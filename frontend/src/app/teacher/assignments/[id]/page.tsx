@@ -105,9 +105,11 @@ export default function TeacherAssignmentDetailPage() {
 
   useEffect(() => {
     if (selectedSubmission) {
-      setGradeMarks(selectedSubmission.marks ?? "");
-      setGradeFeedback(selectedSubmission.feedback ?? "");
-      setGradeError(null);
+      queueMicrotask(() => {
+        setGradeMarks(selectedSubmission.marks ?? "");
+        setGradeFeedback(selectedSubmission.feedback ?? "");
+        setGradeError(null);
+      });
     }
   }, [selectedSubmission]);
 

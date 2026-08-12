@@ -19,7 +19,7 @@ export function RequireRole({
     const user = getUser();
     if (!user) router.replace("/login");
     else if (user.role !== role) router.replace(roleHome[user.role]);
-    else setReady(true);
+    else queueMicrotask(() => setReady(true));
   }, [role, router]);
 
   if (!ready) return <p className="p-8 text-gray-500">Loading…</p>;

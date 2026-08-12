@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { api } from "@/lib/api/client";
@@ -264,7 +264,7 @@ export default function AdminDashboardPage() {
     resolver: zodResolver(createUserSchema),
     defaultValues: { role: "Student" },
   });
-  const watchedRole = userForm.watch("role");
+  const watchedRole = useWatch({ control: userForm.control, name: "role" });
 
   const classForm = useForm<CreateNameForm>({
     resolver: zodResolver(createNameSchema),

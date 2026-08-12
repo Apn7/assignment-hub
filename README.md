@@ -18,17 +18,19 @@ A role-based school/college Assignment & Submission Management System built for 
 
 ## 🔑 Demo Credentials
 
-Working credentials for all three roles (seeded automatically on database startup):
+Working credentials for all three roles (seeded on first backend startup after migrations are applied):
 
 | Role | Email | Password | Assigned Scope / Landing |
 | :--- | :--- | :--- | :--- |
 | **Admin** | `admin@assignmenthub.local` | `Admin#1234` | System portal (`/admin`) — Manage Users, Classes, Subjects, Teacher Entitlements, Audit Tables |
-| **Teacher** | `teacher1@assignmenthub.local` | `Teacher#1234` | Teacher portal (`/teacher`) — Teaches Class 9 – A (Physics) |
+| **Teacher** | `teacher1@assignmenthub.local` | `Teacher#1234` | Teacher portal (`/teacher`) — Class 9 – A (Physics & Mathematics) |
+| **Teacher 2** | `teacher2@assignmenthub.local` | `Teacher#1234` | Teacher portal (`/teacher`) — (English — Class 9 – A & Class 10 – A) |
 | **Student** | `student1@assignmenthub.local` | `Student#1234` | Student portal (`/student`) — Enrolled in Class 9 – A |
 
 *Additional Seed Accounts*:
-- **Teacher 2**: `teacher2@assignmenthub.local` / `Teacher#1234` (Class 10 – A, Higher Mathematics)
 - **Student 2-4**: `student2@assignmenthub.local` to `student4@assignmenthub.local` / `Student#1234`
+
+The seeded subjects are **Physics**, **Mathematics**, and **English**.
 
 ---
 
@@ -63,9 +65,9 @@ Working credentials for all three roles (seeded automatically on database startu
 
 ---
 
-## 🎨 Design System: Anthropic Paper Theme
+## 🎨 Design System: Paper Theme
 
-Styled with an **Anthropic-inspired Paper Theme**:
+Styled with a **Paper Theme**:
 - **Typography**: Google Fonts **Lora** (headings) + **Plus Jakarta Sans** (body).
 - **Color Tokens**: Warm paper canvas `#FBF9F5`, white cards `#FFFFFF` with `#E6E2D6` borders, deep ink `#1F1D1A` text.
 - **UI Components**: Paper status badges (`Draft`, `Published`, `Submitted`, `Reviewed`), backdrop blur modals, drawers, and responsive layouts.
@@ -80,7 +82,7 @@ Styled with an **Anthropic-inspired Paper Theme**:
 | **Styling** | Vanilla CSS & Tailwind CSS (Paper Tokens), Lora & Plus Jakarta Sans fonts |
 | **Forms & State** | React Hook Form + Zod (`@hookform/resolvers`), TanStack Query, Axios |
 | **Backend** | ASP.NET Core 8 Web API, C#, Clean Architecture |
-| **Logic & Validation** | `Result<T>` pattern, FluentValidation, Serilog logging, Swagger/OpenAPI |
+| **Logic & Validation** | `Result<T>` pattern, FluentValidation, ASP.NET Core logging (console + debug providers), Swagger/OpenAPI |
 | **Database** | PostgreSQL 16 via Entity Framework Core 9 (Npgsql), UTC Converters |
 | **Auth & Security** | JWT Bearer Tokens, PBKDF2 `IPasswordHasher`, Role Guards (`RequireRole`) |
 | **Testing** | xUnit, Moq, FluentAssertions (**145 Passing Unit Tests**) |
@@ -117,6 +119,8 @@ assignment-hub/
 
 ## 🚀 5. Setup Instructions (Easy Local Setup)
 
+*Each command block below starts from the repository root.*
+
 ### Prerequisites
 - [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 - [Node.js 20.9+](https://nodejs.org) and `npm`
@@ -126,42 +130,65 @@ assignment-hub/
 
 ### Database Setup Instructions
 
-1. Start the PostgreSQL 16 container:
+Follow these four steps in order from the repository root:
+
+1. Start PostgreSQL and wait for its healthcheck:
 
    ```bash
-   docker compose up -d db
+   docker compose up -d --wait db
    ```
 
-2. Database table schemas and initial demo data seed automatically on backend startup via EF Core migrations and `DataSeeder`. No manual database table creation is needed.
+2. Set the JWT signing secret. From `backend/src/AssignmentHub.Api`:
 
----
+   ```bash
+   cd backend/src/AssignmentHub.Api
+   dotnet user-secrets set "Jwt:Secret" "$(openssl rand -base64 48)"
+   ```
+
+   On Windows, use any securely generated random string of at least 32 characters instead of `$(openssl rand -base64 48)`. You can also provide the value through the `Jwt__Secret` environment variable. The API will not start without a secret of at least 32 bytes.
+
+3. Install the Entity Framework CLI if it is not already installed, then apply the committed migrations:
+
+   ```bash
+   dotnet tool install --global dotnet-ef
+   ```
+
+   ```bash
+   cd backend
+   ASPNETCORE_ENVIRONMENT=Development dotnet ef database update \
+     --project src/AssignmentHub.Infrastructure \
+     --startup-project src/AssignmentHub.Api
+   ```
+
+   On PowerShell, set `$env:ASPNETCORE_ENVIRONMENT = "Development"` before running the same `dotnet ef database update` command. The exact PowerShell form is documented in [docs/database.md](docs/database.md).
+
+4. Demo data seeds automatically on the first backend startup only after migrations are applied. Seeding runs only in Development, is idempotent, and skips with a warning if migrations are pending.
 
 ### Instructions for Running the Backend
 
-From the repository root:
+From `backend/src/AssignmentHub.Api`:
 
-```bash
-cd backend
-dotnet run --project src/AssignmentHub.Api/AssignmentHub.Api.csproj
-```
+   ```bash
+   cd backend/src/AssignmentHub.Api
+   dotnet run --launch-profile http
+   ```
 
-- **Backend API Base URL**: `http://localhost:5080`
-- **Swagger API Documentation**: `http://localhost:5080/swagger`
-- **API Health Check**: `http://localhost:5080/api/health`
-
----
+The API is available at `http://localhost:5080`, Swagger at `http://localhost:5080/swagger`, and the health check at `http://localhost:5080/api/health`.
 
 ### Instructions for Running the Frontend
 
 In a new terminal window:
 
-```bash
-cd frontend
-npm install
-npm run dev
-```
+   ```bash
+   cd frontend
+   cp .env.local.example .env.local
+   npm install
+   npm run dev
+   ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+   Open [http://localhost:3000](http://localhost:3000) in your browser. On Windows PowerShell, use `Copy-Item .env.local.example .env.local` instead of `cp`.
+
+   > 🌐 **Network Requirement Note**: Next.js uses `next/font/google` (`Lora` and `Plus_Jakarta_Sans`) in `src/app/layout.tsx`. Internet access is required during the initial `npm run dev` or `npm run build` step so Next.js can download font files, which are then cached locally in `.next/cache`.
 
 ---
 
@@ -180,10 +207,17 @@ dotnet test --verbosity normal
 
 ## ⚙️ 6. Environment Configuration
 
-Sensitive credentials are excluded from source control. Environment variables are loaded via `.env.example` templates:
+Sensitive credentials are excluded from source control. The backend reads its configuration from user-secrets or environment variables; it does not load `.env` files.
 
-- Root template: `.env.example` (`POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`)
-- Frontend template: `frontend/.env.local.example` (`NEXT_PUBLIC_API_URL=http://localhost:5080`)
+The root `.env.example` is a reference template and documents these variables:
+
+- `ConnectionStrings__Default` — PostgreSQL connection string.
+- `Jwt__Secret` — JWT signing secret; use a random value of at least 32 bytes and do not commit it. User-secrets are recommended for local development.
+- `Jwt__Issuer` — JWT issuer, normally `AssignmentHub`.
+- `Jwt__Audience` — JWT audience, normally `AssignmentHubClient`.
+- `NEXT_PUBLIC_API_URL` — browser-visible API base URL, normally `http://localhost:5080`.
+
+The frontend template `frontend/.env.local.example` contains only `NEXT_PUBLIC_API_URL`. Copy it to `frontend/.env.local` before starting Next.js. Provide backend values through user-secrets or environment variables; do not place them in an `.env` file.
 
 ---
 
@@ -198,6 +232,19 @@ Sensitive credentials are excluded from source control. Environment variables ar
 
 ## 🚧 8. Known Limitations
 
-1. **Admin Management Scope**: Admin CRUD endpoints support **CREATE and LIST** operations. Update and Delete operations for users, classes, subjects, and entitlements are intentionally descoped.
+1. **Admin Management Scope**: Admin endpoints intentionally support **CREATE and LIST** only. Update/Delete were consciously descoped: with `DeleteBehavior.Restrict` protecting historical data, deleting in-use entities would be rejected by design, and safe removal requires soft-delete/deactivation — a planned next iteration rather than a half-safe destructive operation shipped under deadline. All entities can be created via the UI/API, so the full admin workflow is exercisable end-to-end.
 2. **No Refresh Tokens**: Relies on stateless 60-minute JWT access tokens.
 3. **No File Uploads**: Submissions accept structured answer text formatted in markdown/text as per the initial requirements.
+
+---
+
+## 🧭 9. Design Decisions
+
+- **PostgreSQL over MongoDB**: Relational integrity and unique constraints enforce business rules directly in the database.
+- **`Result<T>` pattern instead of exceptions**: Expected business-rule failures are returned explicitly rather than treated as exceptional control flow.
+- **HTTP status discipline**: `404` hides existence, `403` is for known-but-forbidden resources, `409` is for state conflicts, and `422` is for state-dependent values.
+- **`DeleteBehavior.Restrict` everywhere**: Restrict prevents cascade-delete surprises in assignment history.
+- **No Published→Draft transition**: Students may already have seen a published assignment.
+- **Two-layer duplicate-submission defense**: An application check and database unique index protect against duplicates, with SQLSTATE `23505` mapped to `409`.
+- **Explicit migrations instead of auto-migrate on startup**: Schema changes remain deliberate and visible.
+- **Reopening a reviewed submission preserves marks and feedback**: Existing grading context remains available during revision.
