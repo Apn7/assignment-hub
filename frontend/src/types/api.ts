@@ -130,3 +130,65 @@ export interface GradeSubmissionRequest {
 export interface ChangeSubmissionStatusRequest {
   status: "Submitted" | "Reviewed";
 }
+
+// ─── Admin Management Types ──────────────────────────────────────────────────
+
+/** Body for `POST /api/admin/users`. */
+export interface CreateUserRequest {
+  fullName: string;
+  email: string;
+  password: string;
+  role: "Admin" | "Teacher" | "Student";
+  classRoomId?: string | null;
+}
+
+/** Response from admin user endpoints. */
+export interface AdminUserResponse {
+  id: string;
+  fullName: string;
+  email: string;
+  role: string;
+  classRoomId: string | null;
+  classRoomName: string | null;
+}
+
+/** Body for `POST /api/admin/classrooms`. */
+export interface CreateClassRoomRequest {
+  name: string;
+}
+
+/** Response from admin classroom endpoints. */
+export interface AdminClassRoomResponse {
+  id: string;
+  name: string;
+}
+
+/** Body for `POST /api/admin/subjects`. */
+export interface CreateSubjectRequest {
+  name: string;
+}
+
+/** Response from admin subject endpoints. */
+export interface AdminSubjectResponse {
+  id: string;
+  name: string;
+}
+
+/** Body for `POST /api/admin/teacher-assignments`. */
+export interface CreateTeacherAssignmentAdminRequest {
+  teacherId: string;
+  classRoomId: string;
+  subjectId: string;
+}
+
+/** Response from admin teacher-assignment endpoints. */
+export interface AdminTeacherAssignmentResponse {
+  id: string;
+  teacherId: string;
+  teacherName: string;
+  classRoomId: string;
+  classRoomName: string;
+  subjectId: string;
+  subjectName: string;
+}
+
