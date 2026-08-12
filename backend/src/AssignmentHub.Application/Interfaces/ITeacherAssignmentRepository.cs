@@ -3,7 +3,7 @@ using AssignmentHub.Domain.Entities;
 namespace AssignmentHub.Application.Interfaces;
 
 /// <summary>
-/// Read access to <see cref="TeacherAssignment"/>, the row that says a teacher is
+/// Read/write access to <see cref="TeacherAssignment"/>, the row that says a teacher is
 /// entitled to teach one subject to one class.
 /// </summary>
 public interface ITeacherAssignmentRepository
@@ -25,4 +25,16 @@ public interface ITeacherAssignmentRepository
     Task<IReadOnlyList<TeacherAssignment>> ListForTeacherAsync(
         Guid teacherId,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Persists a new entitlement. Returns false when the unique triple index is
+    /// violated (duplicate mapping).
+    /// </summary>
+    Task<bool> TryAddAsync(TeacherAssignment entity, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Lists all entitlements with resolved teacher, class, and subject names.
+    /// Used by admin management endpoints.
+    /// </summary>
+    Task<IReadOnlyList<TeacherAssignment>> ListAllAsync(CancellationToken cancellationToken = default);
 }

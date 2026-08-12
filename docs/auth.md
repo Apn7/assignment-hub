@@ -139,11 +139,10 @@ Deliberately out of scope for this project:
 - **No registration endpoint.** Users come from the seeder, and later from
   admin-managed user creation.
 - **Case-insensitive login, case-sensitive storage.** Login lower-cases the email
-  before lookup, but the unique index on `Users.Email` is case-sensitive. Nothing
-  currently stops an admin creating `Admin@x.com` when `admin@x.com` exists, which
-  would then be unreachable by login. The complete fix is a `citext` column or a
-  unique index on `lower("Email")`; the interim measure is to normalise on write
-  when admin user-creation is built.
+  before lookup, and the admin user-creation endpoint normalises email to lowercase
+  on write. This closes the previously documented gap where duplicate cased emails
+  could become unreachable. The unique index on `Users.Email` is still
+  case-sensitive, but since both read and write normalise, collisions are prevented.
 - **Role checks are only the outer gate.** `[Authorize(Roles = ...)]` answers "is
   this a Teacher"; it cannot answer "is this teacher assigned to *this* class" or
   "is this assignment theirs". Those questions are answered per feature, in the
@@ -152,3 +151,8 @@ Deliberately out of scope for this project:
   [submissions.md](submissions.md#business-rules). A green role check is never
   sufficient on its own, and the 403-versus-404 choice belongs to the rule rather
   than to the middleware.
+- **Admin management supports CREATE and LIST only.** There are no update or delete
+  endpoints for users, classrooms, subjects, or teacher-assignment entitlements.
+  This is a deliberate descope: the onboarding loop (create class → create user →
+  assign → teach → submit → grade) is complete, but correcting a mis-created
+  entity requires direct database access for now.
