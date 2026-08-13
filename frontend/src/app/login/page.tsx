@@ -6,6 +6,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api/client";
 import { saveSession, roleHome } from "@/lib/auth";
 
@@ -17,6 +18,7 @@ type FormData = z.infer<typeof schema>;
 
 export default function LoginPage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [serverError, setServerError] = useState<string | null>(null);
   const {
     register,
@@ -28,6 +30,10 @@ export default function LoginPage() {
     setServerError(null);
     try {
       const res = await api.post("/api/auth/login", data);
+      // Belt and braces alongside the clear on logout: a session can also end without
+      // the Logout button ever being pressed, and whoever signs in next must never be
+      // served the previous account's cached queries.
+      queryClient.clear();
       saveSession(res.data.accessToken, res.data.user);
       router.replace(roleHome[res.data.user.role] ?? "/login");
     } catch (err: unknown) {

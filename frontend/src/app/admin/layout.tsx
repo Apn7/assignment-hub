@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 import { RequireRole } from "@/components/RequireRole";
 import { getUser, clearSession } from "@/lib/auth";
 
@@ -10,11 +11,19 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const user = getUser();
 
   const handleLogout = () => {
     clearSession();
-    router.push("/login");
+    // The QueryClient is created once in Providers and survives this navigation,
+    // because logging out routes client-side rather than reloading the page. Without
+    // clearing it, the next user to sign in reads the previous user's cached entries —
+    // query keys carry no user identity, and staleTime keeps them "fresh" for 30s, so
+    // their dashboard paints someone else's data before the first refetch lands.
+    queryClient.clear();
+    // replace, not push: Back must not return to a screen belonging to the old session.
+    router.replace("/login");
   };
 
   return (
